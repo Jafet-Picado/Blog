@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Blog.Models.BlogPost>
+﻿@using System.Security.Claims;
+@model IEnumerable<Blog.Models.BlogPost>
 
 @{
     ViewData["Title"] = "Index";
@@ -24,6 +25,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.UpdatedAt)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -43,9 +47,15 @@
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.Author.Id)
+            </td>
+            <td>
+                @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == item.AuthorId)
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }                
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>                 
             </td>
         </tr>
 }
