@@ -8,7 +8,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public virtual ICollection<Comment>? Comments { get; set; }
-        public int? AuthorId { get; set; }
+        public string? AuthorId { get; set; }
         public BlogUser? Author { get; set; }
     }
 
