@@ -1,12 +1,12 @@
 ﻿using Blog.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data
 {
-    public class BlogDbContext : IdentityDbContext
-    {
-        public DbSet<BlogUser>? BlogUsers { get; set; }
+    public class BlogDbContext : IdentityDbContext<IdentityUser>
+    {        
         public DbSet<BlogPost>? BlogPosts { get; set; }
         public DbSet<Comment>? Comments { get; set; }
 
@@ -16,7 +16,11 @@ namespace Blog.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BlogUser>().ToTable("BlogUser");            
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "2", Name = "Author", NormalizedName = "AUTHOR" }
+            );
 
             modelBuilder.Entity<BlogPost>().ToTable("BlogPost");
             modelBuilder.Entity<BlogPost>().HasOne(x => x.Author)
