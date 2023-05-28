@@ -7,24 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 
 namespace Blog.Controllers
 {
     public class BlogPostsController : Controller
     {
         private readonly BlogDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public BlogPostsController(BlogDbContext context)
+        public BlogPostsController(BlogDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: BlogPosts
         public async Task<IActionResult> Index()
         {
-              return _context.BlogPosts != null ? 
-                          View(await _context.BlogPosts.ToListAsync()) :
-                          Problem("Entity set 'BlogDbContext.BlogPosts'  is null.");
+            var blogDbContext = _context.BlogPosts.Include(b => b.Author);
+            return View(await blogDbContext.ToListAsync());
         }
 
         // GET: BlogPosts/Details/5
@@ -36,6 +41,7 @@ namespace Blog.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -44,10 +50,11 @@ namespace Blog.Controllers
 
             return View(blogPost);
         }
-
+        
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
             return View();
         }
 
@@ -56,30 +63,37 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                blogPost.AuthorId = string.IsNullOrEmpty(userId) ? null : userId;
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
         // GET: BlogPosts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (id == null || _context.BlogPosts == null)
             {
                 return NotFound();
-            }
-
+            }            
             var blogPost = await _context.BlogPosts.FindAsync(id);
-            if (blogPost == null)
+
+            if (blogPost == null || blogPost.AuthorId != userId)
             {
                 return NotFound();
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
@@ -88,8 +102,10 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId")] BlogPost blogPost)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (id != blogPost.Id)
             {
                 return NotFound();
@@ -99,8 +115,10 @@ namespace Blog.Controllers
             {
                 try
                 {
-                    _context.Update(blogPost);
-                    await _context.SaveChangesAsync();
+                    if (blogPost.AuthorId == userId) { 
+                        _context.Update(blogPost);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -115,6 +133,7 @@ namespace Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
@@ -127,6 +146,7 @@ namespace Blog.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {

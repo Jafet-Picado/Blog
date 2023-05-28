@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
 {
     public class CommentsController : Controller
     {
         private readonly BlogDbContext _context;
-
-        public CommentsController(BlogDbContext context)
+        private readonly UserManager<IdentityUser> _userManager;
+        public CommentsController(BlogDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Comments
@@ -61,6 +64,8 @@ namespace Blog.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                comment.AuthorId = string.IsNullOrEmpty(userId) ? null : userId;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
