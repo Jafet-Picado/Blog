@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jafet\\source\\repos\\Blog\\Blog\\Blog\\Blog.csproj": {}
+    "C:\\Users\\C05977\\Source\\Repos\\Blog\\Blog\\Blog\\Blog.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jafet\\source\\repos\\Blog\\Blog\\Blog\\Blog.csproj": {
+    "C:\\Users\\C05977\\Source\\Repos\\Blog\\Blog\\Blog\\Blog.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jafet\\source\\repos\\Blog\\Blog\\Blog\\Blog.csproj",
+        "projectUniqueName": "C:\\Users\\C05977\\Source\\Repos\\Blog\\Blog\\Blog\\Blog.csproj",
         "projectName": "Blog",
-        "projectPath": "C:\\Users\\jafet\\source\\repos\\Blog\\Blog\\Blog\\Blog.csproj",
-        "packagesPath": "C:\\Users\\jafet\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jafet\\source\\repos\\Blog\\Blog\\Blog\\obj\\",
+        "projectPath": "C:\\Users\\C05977\\Source\\Repos\\Blog\\Blog\\Blog\\Blog.csproj",
+        "packagesPath": "C:\\Users\\C05977\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\C05977\\Source\\Repos\\Blog\\Blog\\Blog\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jafet\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\C05977\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,17 +40,25 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.Facebook": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.AspNetCore.Authentication.Google": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.9, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.9, )"
+              "version": "[6.0.16, )"
             },
             "Microsoft.AspNetCore.Identity.UI": {
               "target": "Package",
-              "version": "[6.0.9, )"
+              "version": "[6.0.16, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
@@ -86,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

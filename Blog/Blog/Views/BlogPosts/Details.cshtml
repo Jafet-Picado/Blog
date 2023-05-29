@@ -40,9 +40,59 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Author.Id)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CategoryId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CategoryId)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> 
     <a asp-action="Index">Back to List</a>
 </div>
+
+<a asp-action="Create" asp-controller="Comments" asp-route-blogPostId="@Model.Id">Add Comment</a>
+
+<div id="commentsSection">
+    <h4>Comments</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Text</th>
+                <th>Created At</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody id="commentsTableBody">
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {                     
+            function loadComments() {
+                $.ajax({
+                    url: '@Url.Action("GetComments", "BlogPosts")',
+                    type: 'GET',
+                    data: {
+                        postId: '@Model.Id'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#commentsTableBody').html(response.html);
+                        } else {
+                            alert('Failed to load comments.');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load comments.');
+                    }
+                });
+            }
+            loadComments();
+        });   
+    </script>
+}

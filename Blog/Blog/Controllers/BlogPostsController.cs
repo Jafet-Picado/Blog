@@ -9,8 +9,6 @@ using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
 
 namespace Blog.Controllers
 {
@@ -50,7 +48,7 @@ namespace Blog.Controllers
 
             return View(blogPost);
         }
-        
+
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
@@ -63,7 +61,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +71,6 @@ namespace Blog.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
@@ -82,14 +79,14 @@ namespace Blog.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (id == null || _context.BlogPosts == null)
             {
                 return NotFound();
-            }            
+            }
+
             var blogPost = await _context.BlogPosts.FindAsync(id);
 
-            if (blogPost == null || blogPost.AuthorId != userId)
+            if (blogPost == null || blogPost.AuthorId != userId) 
             {
                 return NotFound();
             }
@@ -102,10 +99,8 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (id != blogPost.Id)
             {
                 return NotFound();
@@ -115,10 +110,8 @@ namespace Blog.Controllers
             {
                 try
                 {
-                    if (blogPost.AuthorId == userId) { 
-                        _context.Update(blogPost);
-                        await _context.SaveChangesAsync();
-                    }
+                    _context.Update(blogPost);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -178,6 +171,34 @@ namespace Blog.Controllers
         private bool BlogPostExists(int id)
         {
           return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> GetComments(int? id)
+        {
+            var comments = await _context.Comments
+                .Where(c => c.BlogPostId == id)
+                .ToListAsync();
+
+            // Render the comments as an HTML string
+            var commentsHtml = RenderComments(comments);
+
+            return Json(new { success = true, html = commentsHtml });
+        }
+
+        private string RenderComments(List<Comment> comments)
+        {
+            var commentsContainer = "";
+            foreach(var comment in comments) {
+                var commentHtml = "<div class='comment'>" +
+                    "<p>" + comment.Text + "</p>" +
+                    "<p class='author'>Author: " + comment.AuthorId + "</p>" +
+                    "<p class='date'>Date: " + comment.CreatedAt + "</p>" +
+                    "</div>";
+               
+                commentsContainer += (commentHtml);
+            };
+
+            return commentsContainer;
         }
     }
 }

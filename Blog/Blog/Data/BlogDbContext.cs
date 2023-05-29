@@ -9,6 +9,7 @@ namespace Blog.Data
     {        
         public DbSet<BlogPost>? BlogPosts { get; set; }
         public DbSet<Comment>? Comments { get; set; }
+        public DbSet<Category>? Categories { get; set; }
 
         public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
         {
@@ -33,6 +34,8 @@ namespace Blog.Data
                 .WithMany(y => y.Comments)
                 .HasForeignKey(x => x.AuthorId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Category>().ToTable("Category");
 
             base.OnModelCreating(modelBuilder);
         }

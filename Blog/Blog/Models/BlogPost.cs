@@ -10,6 +10,8 @@
         public virtual ICollection<Comment>? Comments { get; set; }
         public string? AuthorId { get; set; }
         public BlogUser? Author { get; set; }
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
     }
 
 }

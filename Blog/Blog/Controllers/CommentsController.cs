@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Blog.Controllers
 {
@@ -25,7 +25,7 @@ namespace Blog.Controllers
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var blogDbContext = _context.Comments.Include(c => c.BlogPost);
+            var blogDbContext = _context.Comments.Include(c => c.Author).Include(c => c.BlogPost);
             return View(await blogDbContext.ToListAsync());
         }
 
@@ -38,6 +38,7 @@ namespace Blog.Controllers
             }
 
             var comment = await _context.Comments
+                .Include(c => c.Author)
                 .Include(c => c.BlogPost)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
@@ -51,6 +52,7 @@ namespace Blog.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id");
             return View();
         }
@@ -60,16 +62,17 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,BlogPostId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,BlogPostId,AuthorId")] Comment comment)
         {
             if (ModelState.IsValid)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                comment.AuthorId = string.IsNullOrEmpty(userId) ? null : userId;
+                comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                comment.CreatedAt = DateTime.Now;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
             return View(comment);
         }
@@ -87,6 +90,7 @@ namespace Blog.Controllers
             {
                 return NotFound();
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
             return View(comment);
         }
@@ -96,7 +100,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,BlogPostId")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,BlogPostId,AuthorId")] Comment comment)
         {
             if (id != comment.Id)
             {
@@ -123,6 +127,7 @@ namespace Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
             return View(comment);
         }
@@ -136,6 +141,7 @@ namespace Blog.Controllers
             }
 
             var comment = await _context.Comments
+                .Include(c => c.Author)
                 .Include(c => c.BlogPost)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
