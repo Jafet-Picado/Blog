@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Blog.styles.css" asp-append-version="true" />
+    <link href="../Views/Bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
     <header>
@@ -20,10 +21,13 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BlogPosts" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BlogPosts" asp-action="Create">Create</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -31,7 +35,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid" style="padding:0">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -46,5 +50,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="../Views/Bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

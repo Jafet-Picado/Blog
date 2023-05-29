@@ -19,12 +19,12 @@ namespace Blog.Controllers
             _context = context;
         }
 
-        // GET: BlogPosts
         public async Task<IActionResult> Index()
         {
               return _context.BlogPosts != null ? 
                           View(await _context.BlogPosts.ToListAsync()) :
                           Problem("Entity set 'BlogDbContext.BlogPosts'  is null.");
+
         }
 
         // GET: BlogPosts/Details/5

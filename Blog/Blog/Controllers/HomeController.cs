@@ -1,5 +1,6 @@
 ﻿using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Blog.Controllers
@@ -15,7 +16,8 @@ namespace Blog.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            
+            return View("~/Views/BlogPosts/Index.cshtml");
         }
 
         public IActionResult Privacy()
