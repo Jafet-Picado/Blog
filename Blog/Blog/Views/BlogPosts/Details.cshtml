@@ -53,8 +53,8 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<h4>Comments</h4>
-<form id="commentForm" onsubmit="CreateComment(event)">
+<h4 id="prueba">Comments</h4>
+<form id="commentForm" onsubmit="CreateComment(event)">    
     <label for="commentText">Añadir nuevo comentario</label>
     <input type="text" id="commentText" name="commentText" placeholder="Enter your comment" />
     <button type="submit">Submit</button>
@@ -69,31 +69,19 @@
         function CreateComment(event){
             event.preventDefault();
 
-            var text = document.getElementById('commentText').value;
-            var date = new Date().toISOString();
-            var userId = 'User.FindFirstValue(ClaimTypes.NameIdentifier)';
+            var text = document.getElementById('commentText').value;            
 
-            var formData = new FormData();       
-            formData.append('Id', 0);
-            formData.append('Text', text);            
-            formData.append('BlogPostId', @Model?.Id);
-            formData.append('AuthorId', userId);
-            formData.append('CreatedAt', date);
-
-            var requestData = {
-                Id: 0,
-                Text: text,
-                CreatedAt: date,
-                BlogPostId: @Model?.Id,
-                AuthorId: userId
+            const requestData = {
+                text: document.getElementById('commentText').value,
+                blogPostId: @Model?.Id,                
             };                    
 
-            fetch('/BlogPosts/CreateComment', {
+            fetch('/Comments/Create?text='+text+'&blogPostId='+@Model.Id, {
                 method: 'POST',
-                //headers: {
-                //    'Content-Type': 'application/json'
-                //},
-                body: formData//JSON.stringify(requestData)
+                headers: {
+                    'content-type': 'application/json'
+                },
+                //body: `text=${text}&blogPostId=${@Model?.Id}`//JSON.stringify(requestData)                
             })
             .then(response => response.json())
             .then(data => {
@@ -107,21 +95,21 @@
         }
 
         function fetchComments() {
-            fetch('/BlogPosts/GetComments?blogPostId=${@Model.Id}')
+            fetch('/Comments/GetComments?blogPostId='+@Model?.Id)
                 .then(response => response.json())
                 .then(comments => {
                     const commentsContainer = document.getElementById('commentsSection');
                     commentsContainer.innerHTML = '';
                     
-                    comments.forEach(comment => {
+                    comments.forEach(comment => {                        
                         const commentElement = document.createElement('div');                                                
                         commentElement.innerHTML = `
                                         <div>
-                                            <p><a href="#">${comment.AuthorId}}</a></p>
-                                            <p>${comment.CreatedAt}</p>
+                                            <p><a href="#">${comment.authorId}}</a></p>
+                                            <p>${comment.createdAt}</p>
                                         </div>
                                         <div>
-                                            <p>${comment.Text}</p>
+                                            <p>${comment.text}</p>
                                         </div>
                                         `;
                         commentsContainer.appendChild(commentElement);

@@ -60,16 +60,18 @@ namespace Blog.Controllers
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,BlogPostId,AuthorId")] Comment comment)
-        {
+        [HttpPost]        
+        public async Task<IActionResult> Create(string text, int blogPostId)
+        {            
             try
             {
+                Comment comment = new Comment();
                 if (ModelState.IsValid)
                 {
+                    comment.Text = text;
+                    comment.BlogPostId = blogPostId;
                     comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    comment.CreatedAt = DateTime.Now;
+                    comment.CreatedAt = DateTime.Now;                                        
                     _context.Add(comment);
                     await _context.SaveChangesAsync();
 
@@ -182,14 +184,22 @@ namespace Blog.Controllers
         {
           return (_context.Comments?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        
+
+        [HttpGet]
         public IActionResult GetComments(int blogPostId)
         {
-            var comments = _context.Comments?
-                .Where(c => c.BlogPostId == blogPostId)
-                .ToList();
+            try
+            {
+                var comments = _context.Comments?
+                    .Where(c => c.BlogPostId == blogPostId)
+                    .ToList();
 
-            return Json(comments);
+                return Json(comments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to fetch comments." });
+            }
         }
     }
 }
