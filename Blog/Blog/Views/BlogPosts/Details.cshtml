@@ -53,46 +53,85 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<a asp-action="Create" asp-controller="Comments" asp-route-blogPostId="@Model.Id">Add Comment</a>
+<h4>Comments</h4>
+<form id="commentForm" onsubmit="CreateComment(event)">
+    <label for="commentText">Añadir nuevo comentario</label>
+    <input type="text" id="commentText" name="commentText" placeholder="Enter your comment" />
+    <button type="submit">Submit</button>
+</form>
 
-<div id="commentsSection">
-    <h4>Comments</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Text</th>
-                <th>Created At</th>
-                <th>Author</th>
-            </tr>
-        </thead>
-        <tbody id="commentsTableBody">
-        </tbody>
-    </table>
+<div id="commentsSection">       
+
 </div>
 
 @section scripts {
     <script>
-        $(function () {                     
-            function loadComments() {
-                $.ajax({
-                    url: '@Url.Action("GetComments", "BlogPosts")',
-                    type: 'GET',
-                    data: {
-                        postId: '@Model.Id'
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            $('#commentsTableBody').html(response.html);
-                        } else {
-                            alert('Failed to load comments.');
-                        }
-                    },
-                    error: function () {
-                        alert('Failed to load comments.');
-                    }
+        function CreateComment(event){
+            event.preventDefault();
+
+            var text = document.getElementById('commentText').value;
+            var date = new Date().toISOString();
+            var userId = 'User.FindFirstValue(ClaimTypes.NameIdentifier)';
+
+            var formData = new FormData();       
+            formData.append('Id', 0);
+            formData.append('Text', text);            
+            formData.append('BlogPostId', @Model?.Id);
+            formData.append('AuthorId', userId);
+            formData.append('CreatedAt', date);
+
+            var requestData = {
+                Id: 0,
+                Text: text,
+                CreatedAt: date,
+                BlogPostId: @Model?.Id,
+                AuthorId: userId
+            };                    
+
+            fetch('/BlogPosts/CreateComment', {
+                method: 'POST',
+                //headers: {
+                //    'Content-Type': 'application/json'
+                //},
+                body: formData//JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                fetchComments();             
+            })
+            .catch(error => {
+                console.error('Error creating comment: ',error);
+            })
+
+            document.getElementById('commentForm').reset();
+        }
+
+        function fetchComments() {
+            fetch('/BlogPosts/GetComments?blogPostId=${@Model.Id}')
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsContainer = document.getElementById('commentsSection');
+                    commentsContainer.innerHTML = '';
+                    
+                    comments.forEach(comment => {
+                        const commentElement = document.createElement('div');                                                
+                        commentElement.innerHTML = `
+                                        <div>
+                                            <p><a href="#">${comment.AuthorId}}</a></p>
+                                            <p>${comment.CreatedAt}</p>
+                                        </div>
+                                        <div>
+                                            <p>${comment.Text}</p>
+                                        </div>
+                                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching comments:', error);
                 });
-            }
-            loadComments();
-        });   
+        }
+
+        fetchComments();
     </script>
 }

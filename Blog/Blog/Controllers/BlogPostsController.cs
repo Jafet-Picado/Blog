@@ -15,9 +15,9 @@ namespace Blog.Controllers
     public class BlogPostsController : Controller
     {
         private readonly BlogDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public BlogPostsController(BlogDbContext context, UserManager<IdentityUser> userManager)
+        public BlogPostsController(BlogDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -179,26 +179,32 @@ namespace Blog.Controllers
                 .Where(c => c.BlogPostId == id)
                 .ToListAsync();
 
-            // Render the comments as an HTML string
-            var commentsHtml = RenderComments(comments);
-
-            return Json(new { success = true, html = commentsHtml });
+            // Render the comments as an HTML string            
+            return Json(comments);
         }
 
-        private string RenderComments(List<Comment> comments)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateComment([FromBody] Comment comment)
         {
-            var commentsContainer = "";
-            foreach(var comment in comments) {
-                var commentHtml = "<div class='comment'>" +
-                    "<p>" + comment.Text + "</p>" +
-                    "<p class='author'>Author: " + comment.AuthorId + "</p>" +
-                    "<p class='date'>Date: " + comment.CreatedAt + "</p>" +
-                    "</div>";
-               
-                commentsContainer += (commentHtml);
-            };
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    comment.CreatedAt = DateTime.Now;
+                    _context.Add(comment);
+                    await _context.SaveChangesAsync();
 
-            return commentsContainer;
+                    return Json(new { success = true });
+                }
+
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to create comment." });
+            }
         }
     }
 }

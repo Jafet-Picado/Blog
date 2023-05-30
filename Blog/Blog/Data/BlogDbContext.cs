@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data
 {
-    public class BlogDbContext : IdentityDbContext<IdentityUser>
+    public class BlogDbContext : IdentityDbContext<BlogUser>
     {        
         public DbSet<BlogPost>? BlogPosts { get; set; }
         public DbSet<Comment>? Comments { get; set; }

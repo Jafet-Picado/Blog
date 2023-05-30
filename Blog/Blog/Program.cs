@@ -11,12 +11,9 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>().AddDefaultTokenProviders()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<BlogDbContext>();
-
-builder.Services.AddDbContext<BlogDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddIdentity<BlogUser, IdentityRole>().AddDefaultTokenProviders()
+    .AddEntityFrameworkStores<BlogDbContext>()
+    .AddDefaultUI();
 
 //builder.Services.AddAuthentication().AddFacebook(option =>
 //{

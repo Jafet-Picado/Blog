@@ -15,8 +15,8 @@ namespace Blog.Controllers
     public class CommentsController : Controller
     {
         private readonly BlogDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        public CommentsController(BlogDbContext context, UserManager<IdentityUser> userManager)
+        private readonly UserManager<BlogUser> _userManager;
+        public CommentsController(BlogDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -64,17 +64,24 @@ namespace Blog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,BlogPostId,AuthorId")] Comment comment)
         {
-            if (ModelState.IsValid)
+            try
             {
-                comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                comment.CreatedAt = DateTime.Now;
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    comment.CreatedAt = DateTime.Now;
+                    _context.Add(comment);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true });
+                }
+
+                return BadRequest(ModelState);
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
-            return View(comment);
+            catch (Exception ex)
+            {                
+                return StatusCode(500, new { error = "Failed to create comment." });
+            }
         }
 
         // GET: Comments/Edit/5
@@ -174,6 +181,15 @@ namespace Blog.Controllers
         private bool CommentExists(int id)
         {
           return (_context.Comments?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        
+        public IActionResult GetComments(int blogPostId)
+        {
+            var comments = _context.Comments?
+                .Where(c => c.BlogPostId == blogPostId)
+                .ToList();
+
+            return Json(comments);
         }
     }
 }
