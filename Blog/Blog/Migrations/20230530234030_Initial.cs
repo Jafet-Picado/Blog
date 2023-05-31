@@ -28,6 +28,8 @@ namespace Blog.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -227,12 +229,12 @@ namespace Blog.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "a3018782-c5f7-4163-bb49-04d97a9eb632", "Admin", "ADMIN" });
+                values: new object[] { "1", "d6b7ecc4-8abc-4ee2-a174-3baa4ea5c429", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "d3ab54a8-ce4f-4f50-a6f2-77dc8f740d86", "Author", "AUTHOR" });
+                values: new object[] { "2", "491f9355-c8f5-42ce-b91d-66a4f0d29919", "Author", "AUTHOR" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

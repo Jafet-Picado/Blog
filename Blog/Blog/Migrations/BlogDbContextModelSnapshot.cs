@@ -78,6 +78,14 @@ namespace Blog.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -200,14 +208,14 @@ namespace Blog.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "349a307f-8af1-49ff-9bb9-44625f13614e",
+                            ConcurrencyStamp = "d6b7ecc4-8abc-4ee2-a174-3baa4ea5c429",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "a1ec7367-414f-4915-baa4-449ec7834703",
+                            ConcurrencyStamp = "491f9355-c8f5-42ce-b91d-66a4f0d29919",
                             Name = "Author",
                             NormalizedName = "AUTHOR"
                         });

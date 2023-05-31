@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20230530210049_Initial")]
+    [Migration("20230530234030_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,14 @@ namespace Blog.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -202,14 +210,14 @@ namespace Blog.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "a3018782-c5f7-4163-bb49-04d97a9eb632",
+                            ConcurrencyStamp = "d6b7ecc4-8abc-4ee2-a174-3baa4ea5c429",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "d3ab54a8-ce4f-4f50-a6f2-77dc8f740d86",
+                            ConcurrencyStamp = "491f9355-c8f5-42ce-b91d-66a4f0d29919",
                             Name = "Author",
                             NormalizedName = "AUTHOR"
                         });

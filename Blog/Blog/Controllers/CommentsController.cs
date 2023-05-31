@@ -190,11 +190,19 @@ namespace Blog.Controllers
         {
             try
             {
-                var comments = _context.Comments?
+                var comments = _context.Comments
                     .Where(c => c.BlogPostId == blogPostId)
+                    .Include(c => c.Author)
+                     .Select(c => new
+                     {
+                         AuthorName = $"{c.Author.FirstName} {c.Author.LastName}", // Combine FirstName and LastName
+                         c.CreatedAt,
+                         c.Text
+                     })
                     .ToList();
 
                 return Json(comments);
+
             }
             catch (Exception ex)
             {
