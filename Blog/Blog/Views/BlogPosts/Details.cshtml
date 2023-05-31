@@ -54,7 +54,7 @@
 </div>
 
 <h4 id="prueba">Comments</h4>
-<form id="commentForm" onsubmit="CreateComment(event)">    
+<form id="commentForm" onsubmit="CreateComment(event)">        
     <label for="commentText">Añadir nuevo comentario</label>
     <input type="text" id="commentText" name="commentText" placeholder="Enter your comment" />
     <button type="submit">Submit</button>
@@ -71,17 +71,11 @@
 
             var text = document.getElementById('commentText').value;            
 
-            const requestData = {
-                text: document.getElementById('commentText').value,
-                blogPostId: @Model?.Id,                
-            };                    
-
-            fetch('/Comments/Create?text='+text+'&blogPostId='+@Model.Id, {
+            fetch('/Comments/Create?text=' + text + '&blogPostId=' + @Model.Id, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'
-                },
-                //body: `text=${text}&blogPostId=${@Model?.Id}`//JSON.stringify(requestData)                
+                },                
             })
             .then(response => response.json())
             .then(data => {
@@ -102,10 +96,10 @@
                     commentsContainer.innerHTML = '';
                     
                     comments.forEach(comment => {                        
-                        const commentElement = document.createElement('div');                                                
+                        const commentElement = document.createElement('div');                                 
                         commentElement.innerHTML = `
                                         <div>
-                                                    <p><a href="#">${comment.authorName}</a></p>
+                                            <p><a href="#">${comment.authorName}</a></p>
                                             <p>${comment.createdAt}</p>
                                         </div>
                                         <div>

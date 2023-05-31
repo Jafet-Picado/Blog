@@ -193,9 +193,9 @@ namespace Blog.Controllers
                 var comments = _context.Comments
                     .Where(c => c.BlogPostId == blogPostId)
                     .Include(c => c.Author)
-                     .Select(c => new
-                     {
-                         AuthorName = $"{c.Author.FirstName} {c.Author.LastName}", // Combine FirstName and LastName
+                    .Select(c => new
+                    {
+                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido", // Combine FirstName and LastName
                          c.CreatedAt,
                          c.Text
                      })
