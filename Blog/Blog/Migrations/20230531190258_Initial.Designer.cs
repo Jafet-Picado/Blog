@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20230530234030_Initial")]
+    [Migration("20230531190258_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,14 +210,14 @@ namespace Blog.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "d6b7ecc4-8abc-4ee2-a174-3baa4ea5c429",
+                            ConcurrencyStamp = "1c4333b4-23b7-43ae-b4ae-4dc44fbef12c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "491f9355-c8f5-42ce-b91d-66a4f0d29919",
+                            ConcurrencyStamp = "78e3c4b3-fac3-44c4-b555-6bcdbf615d9d",
                             Name = "Author",
                             NormalizedName = "AUTHOR"
                         });

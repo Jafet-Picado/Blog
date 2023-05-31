@@ -229,12 +229,12 @@ namespace Blog.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "d6b7ecc4-8abc-4ee2-a174-3baa4ea5c429", "Admin", "ADMIN" });
+                values: new object[] { "1", "1c4333b4-23b7-43ae-b4ae-4dc44fbef12c", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "491f9355-c8f5-42ce-b91d-66a4f0d29919", "Author", "AUTHOR" });
+                values: new object[] { "2", "78e3c4b3-fac3-44c4-b555-6bcdbf615d9d", "Author", "AUTHOR" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
