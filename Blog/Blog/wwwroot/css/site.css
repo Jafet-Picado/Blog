@@ -18,6 +18,22 @@ body {
 }
 
 .index-image{
-    width:200px;
-    height: 200px;
+    width: 850px;
+    height: 350px;
+}
+
+.h3 {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.small {
+    color: #999;
+    font-size: 1.5rem;
+    margin-left: 10px;
+}
+
+.content-paragraph {
+    width: 850px;
 }

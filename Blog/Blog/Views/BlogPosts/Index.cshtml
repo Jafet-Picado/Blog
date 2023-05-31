@@ -4,28 +4,27 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12 text-center">
-            <h1 class="text-center bg-light text-primary p-3">Diario Web</h1>
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12 col-md-9">
+                    @foreach (var item in Model)
+                    {
+                        var base64String = Convert.ToBase64String(item.Image);
+                        var imageSource = $"data:image/jpeg;base64,{base64String}";
+                        <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                        <img src="@imageSource" alt="Post Image" class="index-image" />
+                        <p class="content-paragraph">@item.Content</p>
+                    }
+                </div>
+                <div class="col-12 col-md-3">
+                    <h2>Sección 2</h2>
+                    <p>Contenido de la sección 2.</p>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-9">
-           @foreach (var item in Model) {    
-                var base64String = Convert.ToBase64String(item.Image);
-                var imageSource = $"data:image/jpeg;base64,{base64String}";
-                <img src="@imageSource" alt="Post Image" class="index-image"/>
-                <h3>@item.Title <small>@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                <p>@item.Content</p>
-           }
-        </div>
-        <div class="col-md-3">
-            <h2>Sección 2</h2>
-            <p>Contenido de la sección 2.</p>
-        </div>
+        <div class="col-2"></div>
     </div>
 </div>
