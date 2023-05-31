@@ -5,9 +5,9 @@
         public int Id { get; set; }
         public string? Text { get; set; }
         public DateTime CreatedAt { get; set; }
-
         public int BlogPostId { get; set; }
-        public virtual BlogPost BlogPost { get; set; }
-        
+        public virtual BlogPost? BlogPost { get; set; }
+        public string? AuthorId { get; set; }
+        public BlogUser? Author { get; set; }
     }
 }

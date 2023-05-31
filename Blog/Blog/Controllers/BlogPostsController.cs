@@ -7,24 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Blog.Controllers
 {
     public class BlogPostsController : Controller
     {
         private readonly BlogDbContext _context;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public BlogPostsController(BlogDbContext context)
+        public BlogPostsController(BlogDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-              return _context.BlogPosts != null ? 
-                          View(await _context.BlogPosts.ToListAsync()) :
-                          Problem("Entity set 'BlogDbContext.BlogPosts'  is null.");
-
+            var blogDbContext = _context.BlogPosts.Include(b => b.Author);
+            return View(await blogDbContext.ToListAsync());
         }
 
         // GET: BlogPosts/Details/5
@@ -36,6 +38,7 @@ namespace Blog.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -48,6 +51,7 @@ namespace Blog.Controllers
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
             return View();
         }
 
@@ -56,30 +60,36 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                blogPost.AuthorId = string.IsNullOrEmpty(userId) ? null : userId;
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
         // GET: BlogPosts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id == null || _context.BlogPosts == null)
             {
                 return NotFound();
             }
 
             var blogPost = await _context.BlogPosts.FindAsync(id);
-            if (blogPost == null)
+
+            if (blogPost == null || blogPost.AuthorId != userId) 
             {
                 return NotFound();
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
@@ -88,7 +98,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
         {
             if (id != blogPost.Id)
             {
@@ -115,6 +125,7 @@ namespace Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
             return View(blogPost);
         }
 
@@ -127,6 +138,7 @@ namespace Blog.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -158,6 +170,40 @@ namespace Blog.Controllers
         private bool BlogPostExists(int id)
         {
           return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> GetComments(int? id)
+        {
+            var comments = await _context.Comments
+                .Where(c => c.BlogPostId == id)
+                .ToListAsync();
+
+            // Render the comments as an HTML string            
+            return Json(comments);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateComment([FromBody] Comment comment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    comment.CreatedAt = DateTime.Now;
+                    _context.Add(comment);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true });
+                }
+
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to create comment." });
+            }
         }
     }
 }

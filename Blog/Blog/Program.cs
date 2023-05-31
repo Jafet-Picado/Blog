@@ -1,4 +1,5 @@
 using Blog.Data;
+using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,15 +7,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddIdentity<BlogUser, IdentityRole>().AddDefaultTokenProviders()
+    .AddEntityFrameworkStores<BlogDbContext>()
+    .AddDefaultUI();
+
+//builder.Services.AddAuthentication().AddFacebook(option =>
+//{
+//    option.AppId = "555515893195524";
+//    option.AppSecret = "39737841968438e66bd0e9038f784e1b";
+//});
+
+//builder.Services.AddAuthentication().AddGoogle(option =>
+//{
+//    option.ClientId = "386404887961-ujomiu71hdijd9qpv9l2bu4m1u3u4dbb.apps.googleusercontent.com";
+//    option.ClientSecret = "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";
+//});
 
 builder.Services.AddControllersWithViews();
 
@@ -40,6 +50,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=BlogPosts}/{action=Index}/{id?}");

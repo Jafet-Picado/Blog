@@ -7,22 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Blog.Controllers
 {
     public class CommentsController : Controller
     {
         private readonly BlogDbContext _context;
-
-        public CommentsController(BlogDbContext context)
+        private readonly UserManager<BlogUser> _userManager;
+        public CommentsController(BlogDbContext context, UserManager<BlogUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var blogDbContext = _context.Comments.Include(c => c.BlogPost);
+            var blogDbContext = _context.Comments.Include(c => c.Author).Include(c => c.BlogPost);
             return View(await blogDbContext.ToListAsync());
         }
 
@@ -35,6 +38,7 @@ namespace Blog.Controllers
             }
 
             var comment = await _context.Comments
+                .Include(c => c.Author)
                 .Include(c => c.BlogPost)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
@@ -48,6 +52,7 @@ namespace Blog.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id");
             return View();
         }
@@ -55,18 +60,30 @@ namespace Blog.Controllers
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,BlogPostId")] Comment comment)
-        {
-            if (ModelState.IsValid)
+        [HttpPost]        
+        public async Task<IActionResult> Create(string text, int blogPostId)
+        {            
+            try
             {
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Comment comment = new Comment();
+                if (ModelState.IsValid)
+                {
+                    comment.Text = text;
+                    comment.BlogPostId = blogPostId;
+                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    comment.CreatedAt = DateTime.Now;                                        
+                    _context.Add(comment);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true });
+                }
+
+                return BadRequest(ModelState);
             }
-            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
-            return View(comment);
+            catch (Exception ex)
+            {                
+                return StatusCode(500, new { error = "Failed to create comment." });
+            }
         }
 
         // GET: Comments/Edit/5
@@ -82,6 +99,7 @@ namespace Blog.Controllers
             {
                 return NotFound();
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
             return View(comment);
         }
@@ -91,7 +109,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,BlogPostId")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,BlogPostId,AuthorId")] Comment comment)
         {
             if (id != comment.Id)
             {
@@ -118,6 +136,7 @@ namespace Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
             return View(comment);
         }
@@ -131,6 +150,7 @@ namespace Blog.Controllers
             }
 
             var comment = await _context.Comments
+                .Include(c => c.Author)
                 .Include(c => c.BlogPost)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
@@ -163,6 +183,31 @@ namespace Blog.Controllers
         private bool CommentExists(int id)
         {
           return (_context.Comments?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        [HttpGet]
+        public IActionResult GetComments(int blogPostId)
+        {
+            try
+            {
+                var comments = _context.Comments
+                    .Where(c => c.BlogPostId == blogPostId)
+                    .Include(c => c.Author)
+                    .Select(c => new
+                    {
+                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido", // Combine FirstName and LastName
+                         c.CreatedAt,
+                         c.Text
+                     })
+                    .ToList();
+
+                return Json(comments);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to fetch comments." });
+            }
         }
     }
 }
