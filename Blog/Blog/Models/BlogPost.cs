@@ -1,4 +1,5 @@
-﻿namespace Blog.Models
+﻿using System.Drawing;
+namespace Blog.Models
 {
     public class BlogPost
     {
@@ -12,6 +13,30 @@
         public BlogUser? Author { get; set; }
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
-    }
+        public byte[]? Image { get; set; }
 
+
+        public byte[]? ConvertImageToByte(string url)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(url, FileMode.Open, FileAccess.Read))
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    fs.CopyTo(ms);
+                    return ms.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("IOException source: {0}", ex.Source);
+                return null;
+            }
+        }
+
+        public string ConvertByteToImage(byte[] img)
+        {
+            return "data:image/bmp;base64," + Convert.ToBase64String(img);
+        }
+    }
 }

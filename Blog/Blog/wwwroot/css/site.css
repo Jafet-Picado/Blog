@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.index-image{
+    width:200px;
+    height: 200px;
+}

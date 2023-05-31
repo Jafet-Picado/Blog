@@ -26,7 +26,7 @@ namespace Blog.Controllers
         // GET: BlogPosts
         public async Task<IActionResult> Index()
         {
-            var blogDbContext = _context.BlogPosts.Include(b => b.Author);
+            var blogDbContext = _context.BlogPosts.Include(b => b.Author).Include(b => b.Category);
             return View(await blogDbContext.ToListAsync());
         }
 
@@ -40,6 +40,7 @@ namespace Blog.Controllers
 
             var blogPost = await _context.BlogPosts
                 .Include(b => b.Author)
+                .Include(b => b.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -52,7 +53,8 @@ namespace Blog.Controllers
         // GET: BlogPosts/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
             return View();
         }
 
@@ -61,36 +63,63 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
+
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    byte[] imageBytes = null;
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        imageFile.CopyTo(memoryStream);
+                        imageBytes = memoryStream.ToArray();
+                    }
+
+                    blogPost.Image = imageBytes;
+                }
+                else
+                {
+                    string defaultImagePath = Path.Combine("Data", "Image", "Default.jpg");
+                    byte[] defaultImageBytes = null;
+
+                    using (var fileStream = new FileStream(defaultImagePath, FileMode.Open, FileAccess.Read))
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        fileStream.CopyTo(memoryStream);
+                        defaultImageBytes = memoryStream.ToArray();
+                    }
+
+                    blogPost.Image = defaultImageBytes;
+                }
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 blogPost.AuthorId = string.IsNullOrEmpty(userId) ? null : userId;
                 _context.Add(blogPost);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
             return View(blogPost);
         }
 
         // GET: BlogPosts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id == null || _context.BlogPosts == null)
             {
                 return NotFound();
             }
 
             var blogPost = await _context.BlogPosts.FindAsync(id);
-
-            if (blogPost == null || blogPost.AuthorId != userId) 
+            if (blogPost == null)
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
             return View(blogPost);
         }
 
@@ -99,7 +128,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId,Image")] BlogPost blogPost)
         {
             if (id != blogPost.Id)
             {
@@ -126,7 +155,8 @@ namespace Blog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", blogPost.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
             return View(blogPost);
         }
 
@@ -140,6 +170,7 @@ namespace Blog.Controllers
 
             var blogPost = await _context.BlogPosts
                 .Include(b => b.Author)
+                .Include(b => b.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blogPost == null)
             {
@@ -171,40 +202,6 @@ namespace Blog.Controllers
         private bool BlogPostExists(int id)
         {
           return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        public async Task<IActionResult> GetComments(int? id)
-        {
-            var comments = await _context.Comments
-                .Where(c => c.BlogPostId == id)
-                .ToListAsync();
-
-            // Render the comments as an HTML string            
-            return Json(comments);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateComment([FromBody] Comment comment)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    comment.CreatedAt = DateTime.Now;
-                    _context.Add(comment);
-                    await _context.SaveChangesAsync();
-
-                    return Json(new { success = true });
-                }
-
-                return BadRequest(ModelState);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Failed to create comment." });
-            }
         }
     }
 }
