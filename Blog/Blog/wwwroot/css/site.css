@@ -67,3 +67,15 @@ body {
 .table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+.custom-edit {
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+}
+
+.custom-edit:hover {
+    background-color: #0069d9;
+}
