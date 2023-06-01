@@ -2,26 +2,45 @@
 
 @{
     ViewData["Title"] = "Index";
+    var pageSize = 5; // Cantidad de elementos por página
+    var pageCount = (int)Math.Ceiling((double)Model.Count() / pageSize);
 }
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-2"></div>
         <div class="col-8">
-            <div class="row">
-                <div class="col-12 col-md-9">
-                    @foreach (var item in Model)
-                    {
-                        var base64String = Convert.ToBase64String(item.Image);
-                        var imageSource = $"data:image/jpeg;base64,{base64String}";
-                        <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                        <img src="@imageSource" alt="Post Image" class="index-image" />
-                        <p class="content-paragraph">@item.Content</p>
-                    }
+            @for (int i = 0; i < pageCount; i++)
+            {
+                <div class="row">
+                    <div class="col-12 col-md-9">
+                        @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
+                        {
+                            var base64String = Convert.ToBase64String(item.Image);
+                            var imageSource = $"data:image/jpeg;base64,{base64String}";
+                            <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                            <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
+                            <p class="content-paragraph">@item.Content</p>
+                        }
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <h2>Sección 2</h2>
+                        <p>Contenido de la sección 2.</p>
+                    </div>
                 </div>
-                <div class="col-12 col-md-3">
-                    <h2>Sección 2</h2>
-                    <p>Contenido de la sección 2.</p>
+            }
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            @for (int i = 1; i <= ViewBag.PageCount; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

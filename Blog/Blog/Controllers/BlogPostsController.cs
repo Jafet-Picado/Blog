@@ -24,10 +24,23 @@ namespace Blog.Controllers
         }
 
         // GET: BlogPosts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var blogDbContext = _context.BlogPosts.Include(b => b.Author).Include(b => b.Category);
-            return View(await blogDbContext.ToListAsync());
+            int pageSize = 5; // Número de publicaciones por página
+
+            var model = await _context.BlogPosts
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var totalCount = await _context.BlogPosts.CountAsync();
+            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            ViewBag.PageCount = pageCount;
+            ViewBag.CurrentPage = page;
+
+            return View(model);
         }
 
         // GET: BlogPosts/Details/5
