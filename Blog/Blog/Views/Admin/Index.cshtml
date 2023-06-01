@@ -62,9 +62,9 @@
                                 ${categoryName}
                             </td>
                             <td>
-                                <a href="/BlogPosts/Edit/${blogPost.id}">Editar</a>
-                                <a href="/BlogPosts/Details/${blogPost.id}">Detalles</a>
-                                <a href="/BlogPosts/Delete/${blogPost.id}">Borrar</a>
+                                        <a href="/BlogPosts/Edit/${blogPost.id}" style="color: blue; text-decoration: underline;">Editar</a>
+                                        <a href="/BlogPosts/Details/${blogPost.id}" style="color: green; text-decoration: underline;">Detalles</a>
+                                        <a href="/BlogPosts/Delete/${blogPost.id}" style="color: red; text-decoration: underline;">Borrar</a>
                             </td>                                                    
                         `;
                         table.appendChild(row);
@@ -107,8 +107,8 @@
                                     <td>
                                         ${comments.createdAt}
                                     </td>                                    
-                                    <td>                                                                                
-                                        <a href="/Comments/Delete/${comments.id}">Borrar</a>
+                                    <td>
+                                                <a href="/Comments/Delete/${comments.id}" style="color: red; text-decoration: underline;">Borrar</a>
                                     </td>
                                 `;
                         table.appendChild(row);
@@ -151,8 +151,8 @@
                                                 ${category.name}
                                             </td>                                            
                                             <td>
-                                                <a href="/Categories/Edit/${category.id}">Editar</a>
-                                                <a href="/Categories/Delete/${category.id}">Borrar</a>
+                                                <a href="/Categories/Edit/${category.id}" style="color: blue; text-decoration: underline;">Editar</a>
+                                                <a href="/Categories/Delete/${category.id}" style="color: red; text-decoration: underline;">Borrar</a>
                                             </td>
                                         `;
                         table.appendChild(row);
@@ -181,9 +181,8 @@
                                         <th>Correo</th>                                        
                                         <th>Controles</th>
                                     `;
-                    table.appendChild(headersRow);
-
-                    users.forEach(user => {
+                    table.appendChild(headersRow);                    
+                    users.forEach(user => {                                                
                         const row = document.createElement('tr');
                         row.innerHTML = `
                                             <td>
@@ -196,7 +195,7 @@
                                                 ${user.email}
                                             </td>                                            
                                             <td>
-                                                <a href="/Admin/DeleteUser/${user.id}">Borrar</a>
+                                                <a href="/Admin/DeleteUser/${user.id}" style="color: red; text-decoration: underline;">Borrar</a>                                                
                                             </td>
                                         `;
                         table.appendChild(row);
@@ -204,7 +203,7 @@
                     container.appendChild(table);
                 })
                 .catch(error => {
-                    console.error('Error loading comments: ', error);
+                    console.error('Error loading users: ', error);
                 })
         }
     </script>
