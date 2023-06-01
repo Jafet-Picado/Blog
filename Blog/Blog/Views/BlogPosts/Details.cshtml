@@ -98,13 +98,10 @@
                     comments.forEach(comment => {                        
                         const commentElement = document.createElement('div');                                 
                         commentElement.innerHTML = `
-                                        <div>
-                                            <p><a href="#">${comment.authorName}</a></p>
-                                            <p>${comment.createdAt}</p>
-                                        </div>
-                                        <div>
-                                            <p>${comment.text}</p>
-                                        </div>
+                                        <p>${comment.authorName}</p>
+                                        <p>${comment.createdAt}</p>
+                                        <p>${comment.email}</p>
+                                        <p>${comment.text}</p>
                                         `;
                         commentsContainer.appendChild(commentElement);
                     });

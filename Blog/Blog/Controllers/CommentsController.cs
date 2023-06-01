@@ -195,9 +195,10 @@ namespace Blog.Controllers
                     .Include(c => c.Author)
                     .Select(c => new
                     {
-                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido", // Combine FirstName and LastName
+                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido",
                          c.CreatedAt,
-                         c.Text
+                        Email = c.Author != null ? c.Author.Email : "",
+                        c.Text
                      })
                     .ToList();
 
