@@ -69,13 +69,32 @@ body {
 }
 
 .custom-edit {
-    border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    color: #fff;
-    background-color: #007bff;
+    background-color: blue !important;
+    color: white;
 }
 
 .custom-edit:hover {
-    background-color: #0069d9;
+    background-color: mediumblue !important;
+    color: white;
 }
+
+.custom-details {
+    background-color: forestgreen !important;
+    color: white;
+}
+
+.custom-details:hover {
+    background-color: green !important;
+    color: white;
+}
+
+.custom-delete {
+    background-color: red !important;
+    color: white;
+}
+
+.custom-delete:hover {
+    background-color: darkred !important;
+    color: white;
+}
+

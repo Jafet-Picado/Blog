@@ -11,9 +11,7 @@
 </div>
 <br>
 <br>
-<div id="panelContainer">
-
-</div>
+<div id="panelContainer"></div>
 
 @section scripts{
     <script>
@@ -62,9 +60,9 @@
                                 ${categoryName}
                             </td>
                             <td>
-                                        <a href="/BlogPosts/Edit/${blogPost.id}" style="color: blue; text-decoration: underline;">Editar</a>
-                                        <a href="/BlogPosts/Details/${blogPost.id}" style="color: green; text-decoration: underline;">Detalles</a>
-                                        <a href="/BlogPosts/Delete/${blogPost.id}" style="color: red; text-decoration: underline;">Borrar</a>
+                                <a href="/BlogPosts/Edit/${blogPost.id}" class="btn custom-edit">Editar</a>
+                                <a href="/BlogPosts/Details/${blogPost.id}" class="btn custom-details">Detalles</a>
+                                <a href="/BlogPosts/Delete/${blogPost.id}" class="btn custom-delete">Borrar</a>
                             </td>                                                    
                         `;
                         table.appendChild(row);
@@ -89,6 +87,7 @@
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `
                                 <th>Autor</th>
+                                <th>Correo</th>
                                 <th>Texto</th>
                                 <th>Fecha</th>                                
                                 <th>Controles</th>
@@ -102,13 +101,16 @@
                                         ${comments.authorName}
                                     </td>
                                     <td>
+                                        ${comments.email}
+                                    </td>
+                                    <td>
                                         ${comments.text}
                                     </td>
                                     <td>
                                         ${comments.createdAt}
                                     </td>                                    
                                     <td>
-                                                <a href="/Comments/Delete/${comments.id}" style="color: red; text-decoration: underline;">Borrar</a>
+                                        <a href="/Comments/Delete/${comments.id}" class="btn custom-delete">Borrar</a>
                                     </td>
                                 `;
                         table.appendChild(row);
@@ -151,8 +153,8 @@
                                                 ${category.name}
                                             </td>                                            
                                             <td>
-                                                <a href="/Categories/Edit/${category.id}" style="color: blue; text-decoration: underline;">Editar</a>
-                                                <a href="/Categories/Delete/${category.id}" style="color: red; text-decoration: underline;">Borrar</a>
+                                                <a href="/Categories/Edit/${category.id}" class="btn custom-edit">Editar</a>
+                                                <a href="/Categories/Delete/${category.id}" class="btn custom-delete">Borrar</a>
                                             </td>
                                         `;
                         table.appendChild(row);
@@ -176,7 +178,7 @@
 
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `
-                                        <th>Id</th>
+                                        <th>Identificador</th>
                                         <th>Nombre</th>
                                         <th>Correo</th>                                        
                                         <th>Controles</th>
@@ -195,8 +197,7 @@
                                                 ${user.email}
                                             </td>                                            
                                             <td>
-                                                <button type="button" class="custom-edit" >Editar</button>
-                                                                                               
+                                                <a href="/Admin/DeleteUser/${user.id}" class="btn custom-delete">Borrar</a>
                                             </td>
                                         `;
                         table.appendChild(row);

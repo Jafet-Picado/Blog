@@ -57,13 +57,14 @@ namespace Blog.Controllers
             try
             {
                 var comments = _context.Comments
-                    .Include(c => c.Author)                    
+                    .Include(c => c.Author)
                     .Select(c => new
                     {
                         c.Text,
                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido",
+                        Email = c.Author != null ? c.Author.Email : "",
                         c.CreatedAt,
-                        c.Id,                        
+                        c.Id                        
                     })
                     .ToList();
 
@@ -127,9 +128,28 @@ namespace Blog.Controllers
             }
         }
 
-        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteUser(string? id)
+        {
+            if (id == null || _context.BlogPosts == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _context.Users
+                .Include(b => b.Posts)
+                .Include(b => b.Comments)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost, ActionName("DeleteUserConfirmed")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUserConfirmed(string id)
         {
             if (_context.Users == null)
             {
