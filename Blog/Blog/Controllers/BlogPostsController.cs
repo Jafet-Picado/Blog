@@ -118,9 +118,9 @@ namespace Blog.Controllers
             return View(blogPost);
         }
 
-        // GET: BlogPosts/Edit/5
+        // GET: BlogPosts/Edit/5        
         public async Task<IActionResult> Edit(int? id)
-        {
+        {            
             if (id == null || _context.BlogPosts == null)
             {
                 return NotFound();
@@ -215,6 +215,40 @@ namespace Blog.Controllers
         private bool BlogPostExists(int id)
         {
           return (_context.BlogPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> GetComments(int? id)
+        {
+            var comments = await _context.Comments
+                .Where(c => c.BlogPostId == id)
+                .ToListAsync();
+
+            // Render the comments as an HTML string            
+            return Json(comments);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateComment([FromBody] Comment comment)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    comment.CreatedAt = DateTime.Now;
+                    _context.Add(comment);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true });
+                }
+
+                return BadRequest(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to create comment." });
+            }
         }
     }
 }
