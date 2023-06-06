@@ -151,3 +151,14 @@ body {
     color: white;
 }
 
+.ver-mas-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #00BFFF;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+

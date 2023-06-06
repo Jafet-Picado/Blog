@@ -20,7 +20,16 @@
                             var imageSource = $"data:image/jpeg;base64,{base64String}";
                             <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
                             <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
-                            <p class="content-paragraph">@item.Content</p>
+                            @*<p class="content-paragraph">@item.Content</p>*@
+                            @if (item.Content.Length > 300)
+                            {
+                                <p>@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
+                            }
+                            else
+                            {
+                                <p>@Html.Raw(Html.Encode(item.Content))</p>
+                            }
+
                         }
                     </div>
                     <div class="col-12 col-md-3">
