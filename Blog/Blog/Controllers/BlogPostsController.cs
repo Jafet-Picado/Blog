@@ -264,5 +264,19 @@ namespace Blog.Controllers
 
             return View(posts);
         }
+
+        public IActionResult GetAllAuthors()
+        {
+            var authors = _context.Users
+                .Where(c => c.Posts != null && c.Posts.Count > 0)
+                .Select(c => new
+                {
+                    Name = $"{c.FirstName} {c.LastName}",
+                    c.Id
+                })
+                .ToList();
+
+            return Json(authors);
+        }
     }
 }

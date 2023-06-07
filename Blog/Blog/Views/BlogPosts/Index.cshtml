@@ -52,8 +52,11 @@
             }
         </div>
         <div class="col-lg-3" style="justify-self: end;">
-            <h2>Sección 2</h2>
-            <p>Contenido de la sección 2.</p>
+            <h3>Categor&iacute;as</h3>
+            <div id="listOfCategories"></div>
+            <br>
+            <h3>Autores: </h3>
+            <div id="listOfAuthors"></div>
         </div>
     </div>
     <div class="row">
@@ -119,6 +122,7 @@
             }
 
             fetchCategories();
+            fetchAuthors();
         });
     </script>
 }
