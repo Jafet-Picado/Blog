@@ -20,6 +20,7 @@ body {
 .index-image{
     width: 850px;
     height: 350px;
+    padding-bottom: 10px;
 }
 
 .h3 {
@@ -169,6 +170,7 @@ body {
     padding-left: 10px;
     align-items: center;
     width: 850px;
+    display: inline-block;
 }
 
 .p-content {
@@ -202,4 +204,25 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.mr-3-with-padding {
+    padding-right: 20px;
+}
+
+.comentts {
+    display: inline-block;
+    border-radius: 20px;
+    color: #00BFFF;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.card-no-border {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border: none;
+    width: 870px;
+    padding: 10px; 
+    background-color: white;
 }

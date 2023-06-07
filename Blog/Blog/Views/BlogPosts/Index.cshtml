@@ -14,10 +14,14 @@
             {
                 <div class="row">
                     <div class="col-12 col-md-9">
-                        @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
-                        {
+                        
+                            @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
+                            {
+                            <div class="card-no-border">
+                                @{
                                 var base64String = Convert.ToBase64String(item.Image);
                                 var imageSource = $"data:image/jpeg;base64,{base64String}";
+                                }
                                 <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
                                 <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
                                 @if (item.Content.Length > 300)
@@ -28,18 +32,28 @@
                                 {
                                     <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
                                 }
-                                <div class="box">
-                                @if(item.Author is not null){
-                                    <p>Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId">@item.Author.FirstName @item.Author.LastName</a></p>
-                                }
-                                else
-                                {
-                                    <p>Autor: Desconocido</p>
-                                }
-
+                                <div class="box d-flex align-items-center">
+                                    @if (item.Author is not null)
+                                    {
+                                        <p class="mr-3 mr-3-with-padding">Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mr-3 mr-3-with-padding">Autor: Desconocido</p>
+                                    }
+                                    @if (item.Comments is not null)
+                                    {
+                                        <p class="mr-3"><a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="comentts">Comentarios: @item.Comments.Count</a></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mr-3">Comentarios: 0</p>
+                                    }
                                 </div>
+                            </div>
                                 <div style="margin-bottom: 30px;"></div>
-                        }
+                            }
+                        
                     </div>
                     <div class="col-12 col-md-3">
                         <h2>Sección 2</h2>
