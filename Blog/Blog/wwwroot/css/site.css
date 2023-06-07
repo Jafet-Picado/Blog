@@ -8,6 +8,7 @@ html {
     }
 }
 
+
 html {
     position: relative;
     min-height: 100%;
@@ -17,9 +18,9 @@ body {
   margin-bottom: 60px;
 }
 
-.index-image{
-    width: 850px;
-    height: 350px;
+.index-image {
+    width: 800px;
+    height: 432px;
     padding-bottom: 10px;
 }
 
@@ -28,7 +29,7 @@ body {
     font-size: 1.5rem;
     color: #333;
     padding-bottom: 1rem;
-    width: 850px
+    width: 850px;
 }
 
 .small {
@@ -38,9 +39,9 @@ body {
 }
 
 .content-paragraph {
-    width: 850px;
+    width: 800px;
     padding-bottom: 2rem;
-    padding-top:1rem;
+    padding-top: 1rem;
     font-size: 1.2rem;
 }
 
@@ -68,8 +69,6 @@ body {
     font-weight: bold;
     padding: 5px;
     text-decoration: none;
-}
-    margin-bottom: 60px;
 }
 
 .option-buttons {
@@ -169,7 +168,7 @@ body {
     padding-top: 10px;
     padding-left: 10px;
     align-items: center;
-    width: 850px;
+    width: 800px;
     display: inline-block;
 }
 
