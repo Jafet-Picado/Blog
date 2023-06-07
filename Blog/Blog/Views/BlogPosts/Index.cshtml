@@ -16,20 +16,29 @@
                     <div class="col-12 col-md-9">
                         @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
                         {
-                            var base64String = Convert.ToBase64String(item.Image);
-                            var imageSource = $"data:image/jpeg;base64,{base64String}";
-                            <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                            <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
-                            @*<p class="content-paragraph">@item.Content</p>*@
-                            @if (item.Content.Length > 300)
-                            {
-                                <p>@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
-                            }
-                            else
-                            {
-                                <p>@Html.Raw(Html.Encode(item.Content))</p>
-                            }
+                                var base64String = Convert.ToBase64String(item.Image);
+                                var imageSource = $"data:image/jpeg;base64,{base64String}";
+                                <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                                <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
+                                @if (item.Content.Length > 300)
+                                {
+                                    <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
+                                }
+                                else
+                                {
+                                    <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
+                                }
+                                <div class="box">
+                                @if(item.Author is not null){
+                                    <p>Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId">@item.Author.FirstName @item.Author.LastName</a></p>
+                                }
+                                else
+                                {
+                                    <p>Autor: Desconocido</p>
+                                }
 
+                                </div>
+                                <div style="margin-bottom: 30px;"></div>
                         }
                     </div>
                     <div class="col-12 col-md-3">

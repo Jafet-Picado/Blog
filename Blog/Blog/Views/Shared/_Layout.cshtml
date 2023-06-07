@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BlogUser> SignInManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -20,11 +22,16 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="BlogPosts" asp-action="Create">Create</a>
-                        </li>
-                    </ul>
+                   
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a class="btn btn-outline-secondary" asp-area="" asp-controller="BlogPosts" asp-action="Create">Create</a>
+                            }
+                            </li>
+                        </ul>
+                    
                     <div class="partial-login">
                         <partial  name="_LoginPartial" />
                     </div> 

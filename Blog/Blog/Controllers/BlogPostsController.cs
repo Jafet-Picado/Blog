@@ -9,6 +9,7 @@ using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
@@ -29,6 +30,7 @@ namespace Blog.Controllers
             int pageSize = 5; // Número de publicaciones por página
 
             var model = await _context.BlogPosts
+                .Include(b => b.Author)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -64,6 +66,7 @@ namespace Blog.Controllers
         }
 
         // GET: BlogPosts/Create
+        [Authorize(Roles ="Author")]
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
@@ -249,6 +252,16 @@ namespace Blog.Controllers
             {
                 return StatusCode(500, new { error = "Failed to create comment." });
             }
+        }
+
+        public IActionResult PostsByAuthor(string id)
+        {
+            var posts =  _context.BlogPosts
+                .Include(c => c.Author)
+                .Where(p => p.AuthorId == id)
+                .ToList();
+
+            return View(posts);
         }
     }
 }
