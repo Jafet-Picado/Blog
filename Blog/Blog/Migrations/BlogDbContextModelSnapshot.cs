@@ -50,7 +50,7 @@ namespace Blog.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -211,14 +211,14 @@ namespace Blog.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "caf29960-ae85-49b8-b0e6-c27e40e4d74d",
+                            ConcurrencyStamp = "ba1b6350-3ea3-46d2-9802-bcb090dc53af",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "f9700631-2a2c-4202-8386-3c5c8692ccaf",
+                            ConcurrencyStamp = "ae4c4f37-0b74-4dc2-be03-15b51bf326c9",
                             Name = "Author",
                             NormalizedName = "AUTHOR"
                         });

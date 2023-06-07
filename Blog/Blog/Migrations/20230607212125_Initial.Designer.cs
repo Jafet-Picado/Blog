@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blog.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20230531195244_AddImage")]
-    partial class AddImage
+    [Migration("20230607212125_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,14 +46,13 @@ namespace Blog.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Image")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -214,14 +213,14 @@ namespace Blog.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "1c787a96-8dc8-494d-9c94-cb329b375df7",
+                            ConcurrencyStamp = "ba1b6350-3ea3-46d2-9802-bcb090dc53af",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "c0f49a90-4681-4b22-b916-c91158d3500e",
+                            ConcurrencyStamp = "ae4c4f37-0b74-4dc2-be03-15b51bf326c9",
                             Name = "Author",
                             NormalizedName = "AUTHOR"
                         });

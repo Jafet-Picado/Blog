@@ -27,7 +27,7 @@ body {
     font-size: 1.5rem;
     color: #333;
     padding-bottom: 1rem;
-    width: 850px
+    width: 850px;
 }
 
 .small {
@@ -67,8 +67,6 @@ body {
     font-weight: bold;
     padding: 5px;
     text-decoration: none;
-}
-    margin-bottom: 60px;
 }
 
 .option-buttons {
