@@ -8,6 +8,7 @@ html {
     }
 }
 
+
 html {
     position: relative;
     min-height: 100%;
@@ -17,9 +18,10 @@ body {
   margin-bottom: 60px;
 }
 
-.index-image{
-    width: 850px;
-    height: 350px;
+.index-image {
+    width: 800px;
+    height: 432px;
+    padding-bottom: 10px;
 }
 
 .h3 {
@@ -37,9 +39,9 @@ body {
 }
 
 .content-paragraph {
-    width: 850px;
+    width: 800px;
     padding-bottom: 2rem;
-    padding-top:1rem;
+    padding-top: 1rem;
     font-size: 1.2rem;
 }
 
@@ -166,7 +168,8 @@ body {
     padding-top: 10px;
     padding-left: 10px;
     align-items: center;
-    width: 850px;
+    width: 800px;
+    display: inline-block;
 }
 
 .p-content {
@@ -179,3 +182,46 @@ body {
     font-size: 50px;
 }
 
+.custom-button {
+    background-color: transparent;
+    color: gray;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
+    text-decoration: none; /* Elimina el subrayado */
+    padding: 12px 24px; /* Ajusta el tamaño del botón */
+    font-size: 18px; /* Ajusta el tamaño de la letra */
+}
+
+    .custom-button:hover {
+        background-color: gray;
+        color: white;
+        cursor: pointer;
+    }
+
+.navbar-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mr-3-with-padding {
+    padding-right: 20px;
+}
+
+.comentts {
+    display: inline-block;
+    border-radius: 20px;
+    color: #00BFFF;
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.card-no-border {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    border: none;
+    width: 870px;
+    padding: 10px; 
+    background-color: white;
+}

@@ -31,6 +31,7 @@ namespace Blog.Controllers
 
             var model = await _context.BlogPosts
                 .Include(b => b.Author)
+                .Include(c => c.Comments)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

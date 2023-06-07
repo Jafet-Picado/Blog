@@ -6,63 +6,69 @@
     var pageCount = (int)Math.Ceiling((double)Model.Count() / pageSize);
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8">
+<div class="container">
+    <div class="row gx-md-5">
+        <div class="col-lg-9" style="justify-self: center;">
             @for (int i = 0; i < pageCount; i++)
             {
-                <div class="row">
-                    <div class="col-12 col-md-9">
-                        @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
-                        {
-                                var base64String = Convert.ToBase64String(item.Image);
-                                var imageSource = $"data:image/jpeg;base64,{base64String}";
-                                <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                                <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
-                                @if (item.Content.Length > 300)
-                                {
-                                    <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
-                                }
-                                else
-                                {
-                                    <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
-                                }
-                                <div class="box">
-                                @if(item.Author is not null){
-                                    <p>Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId">@item.Author.FirstName @item.Author.LastName</a></p>
-                                }
-                                else
-                                {
-                                    <p>Autor: Desconocido</p>
-                                }
-
-                                </div>
-                                <div style="margin-bottom: 30px;"></div>
+                @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
+                {
+                    <div class="card-no-border">
+                        @{
+                            var base64String = Convert.ToBase64String(item.Image);
+                            var imageSource = $"data:image/jpeg;base64,{base64String}";
                         }
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <h2>Sección 2</h2>
-                        <p>Contenido de la sección 2.</p>
-                    </div>
-                </div>
-            }
-            <div class="row">
-                <div class="col-12">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            @for (int i = 1; i <= ViewBag.PageCount; i++)
+                        <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                        <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
+                        @if (item.Content.Length > 300)
+                        {
+                            <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
+                        }
+                        else
+                        {
+                            <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
+                        }
+                        <div class="box d-flex align-items-center">
+                            @if (item.Author is not null)
                             {
-                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
-                                </li>
+                                <p class="mr-3 mr-3-with-padding">Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
                             }
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+                            else
+                            {
+                                <p class="mr-3 mr-3-with-padding">Autor: Desconocido</p>
+                            }
+                            @if (item.Comments is not null)
+                            {
+                                <p class="mr-3"><a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="comentts">Comentarios: @item.Comments.Count</a></p>
+                            }
+                            else
+                            {
+                                <p class="mr-3">Comentarios: 0</p>
+                            }
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 30px;"></div>
+                }
+            }
         </div>
-        <div class="col-2"></div>
+        <div class="col-lg-3" style="justify-self: end;">
+            <h2>Sección 2</h2>
+            <p>Contenido de la sección 2.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= ViewBag.PageCount; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 
