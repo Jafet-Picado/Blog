@@ -19,10 +19,12 @@
                             var imageSource = $"data:image/jpeg;base64,{base64String}";
                         }
                         <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                        <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
+                        <div class="image-container">
+                            <img src="@imageSource" alt="Post Image" class="index-image" />
+                        </div>
                         @if (item.Content.Length > 300)
                         {
-                            <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn"> Ver más</a></p>
+                            <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn">Ver más</a></p>
                         }
                         else
                         {
@@ -52,8 +54,8 @@
             }
         </div>
         <div class="col-lg-3" style="justify-self: end;">
-            <h2>Sección 2</h2>
-            <p>Contenido de la sección 2.</p>
+            <h2 style="padding-left: 20px;">Sección 2</h2>
+            <p style="padding-left: 20px;">Contenido de la sección 2.</p>
         </div>
     </div>
     <div class="row">

@@ -4,11 +4,10 @@
     ViewData["Title"] = "Details";
 }
 
-<dd class="col-sm-10">
-    <h1>@Html.DisplayFor(model => model.Title)</h1>
-</dd>
-
-<div>
+<div class="container">
+    <div class="col-sm-10">
+        <h1>@Html.DisplayFor(model => model.Title)</h1>
+    </div>
     <hr />
     <div class="row">
         <div class = "col-sm-2">
@@ -41,30 +40,35 @@
         <div class = "col-sm-10">
             <p>@Html.DisplayFor(model => model.CategoryId)</p>
         </div>
+        <div class="col-sm-2">
+            <h4>Imagen:</h4>
+        </div>
        <div class="col-sm-12">
             @{
                 var base64String = Convert.ToBase64String(Model.Image);
                 var imageSource = $"data:image/jpeg;base64,{base64String}";
             }
-            <img src="@imageSource" alt="Post Image" class="index-image" style="width: 850px;" />
+            <img src="@imageSource" alt="Post Image" class="index-image" />
+        </div>
+    </div>
+
+    <div style="padding:10px;">
+        <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@Model?.Id">Editar</a>
+        <a asp-action="Index" class="btn btn-info">Volver a la lista</a>
+    </div>
+    <div class="card-no-border">
+        <h4 id="prueba">Comentarios</h4>
+        <form id="commentForm" onsubmit="CreateComment(event)">        
+            <textarea id="commentText" class="form-control" name="commentText" placeholder="Añada un nuevo comentario" maxlength="300" cols="100" rows="5"></textarea>
+            <br />
+            <button class="btn btn-secondary btn-sm" type="submit">Agregar</button>
+        </form>
+        <br />
+        <div class="comment-section" id="commentsSection">
         </div>
     </div>
 </div>
-<div style="padding:10px;">
-    <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@Model?.Id">Editar</a>
-    <a asp-action="Index" class="btn btn-info">Volver a la lista</a>
-</div>
 
-<h4 id="prueba">Comments</h4>
-<form id="commentForm" onsubmit="CreateComment(event)">        
-    <label for="commentText">Añadir nuevo comentario</label>
-    <input type="text" id="commentText" name="commentText" placeholder="Enter your comment" />
-    <button type="submit">Submit</button>
-</form>
-
-<div id="commentsSection">       
-
-</div>
 
 @section scripts {
     <script>
@@ -100,10 +104,11 @@
                     comments.forEach(comment => {                        
                         const commentElement = document.createElement('div');                                 
                         commentElement.innerHTML = `
-                                        <p>${comment.authorName}</p>
-                                        <p>${comment.createdAt}</p>
-                                        <p>${comment.email}</p>
-                                        <p>${comment.text}</p>
+                                        <h5 class="comment-title">${comment.authorName}</h5>
+                                        <p class="comment-date">${comment.createdAt}</p>
+                                        <p class="comment-date">${comment.email}</p>
+                                        <p comment-content>${comment.text}</p>
+                                        <hr />
                                         `;
                         commentsContainer.appendChild(commentElement);
                     });
