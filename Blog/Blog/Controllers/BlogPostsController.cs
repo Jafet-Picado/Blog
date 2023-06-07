@@ -156,6 +156,8 @@ namespace Blog.Controllers
             {
                 try
                 {
+                    var date = DateTime.Now;
+                    blogPost.UpdatedAt = date;
                     _context.Update(blogPost);
                     await _context.SaveChangesAsync();
                 }
