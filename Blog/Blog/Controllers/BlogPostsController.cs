@@ -145,7 +145,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId,Image")] BlogPost blogPost)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
             if (id != blogPost.Id)
             {
@@ -156,9 +156,24 @@ namespace Blog.Controllers
             {
                 try
                 {
+                    var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        byte[]? imageBytes = null;
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            imageFile.CopyTo(memoryStream);
+                            imageBytes = memoryStream.ToArray();
+                        }
+
+                        originalBlogPost.Image = imageBytes;
+                    }
                     var date = DateTime.Now;
-                    blogPost.UpdatedAt = date;
-                    _context.Update(blogPost);
+                    originalBlogPost.Title = blogPost.Title;
+                    originalBlogPost.Content = blogPost.Content;
+                    originalBlogPost.UpdatedAt = date;
+                    _context.Update(originalBlogPost);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
