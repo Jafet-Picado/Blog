@@ -182,6 +182,7 @@ body {
     align-items: center;
     width: 850px;
     display: inline-block;
+    border-radius: 20px;
 }
 
 .p-content {
@@ -200,9 +201,10 @@ body {
     font-weight: bold;
     border: none;
     transition: background-color 0.3s ease;
-    text-decoration: none; 
+    text-decoration: none;
     padding: 12px 24px;
     font-size: 18px;
+    border-radius: 20px;
 }
 
     .custom-button:hover {
@@ -236,6 +238,7 @@ body {
     width: 870px;
     padding: 10px;
     background-color: white;
+    border-radius: 20px;
 }
 
 .card-no-border-details {
@@ -244,6 +247,7 @@ body {
     width: 850px;
     padding: 30px;
     background-color: white;
+    border-radius: 20px;
 }
 
 
@@ -286,17 +290,21 @@ footer {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-    .form-container h1 {
-        color: #2691d9;
-        text-align: center;
-        padding: 20px 0;
-        border-bottom: 1px solid silver;
-    }
+.wider-container {
+    width: 600px; 
+}
 
-    .form-container form {
-        padding: 0 40px;
-        box-sizing: border-box;
-    }
+.form-container h1 {
+    color: #2691d9;
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid silver;
+}
+
+.form-container form {
+    padding: 0 40px;
+    box-sizing: border-box;
+}
 
 form .form-text {
     position: relative;
@@ -345,12 +353,16 @@ form .form-text {
         transition: .5s;
     }
 
-.signup-link {
-    margin-top: 20px;    
-    text-align: center;
-    font-size: 16px;
-    color: #666666;
-}
+    .form-container input[type="submit"].extended-submit {
+        margin-bottom: 20px;
+    }
+
+    .signup-link {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #666666;
+    }
 
     .signup-link a {
         display: inline-block;        
@@ -368,4 +380,12 @@ form .form-text {
     text-align: center;
     font-size: 16px;
     color: #666666;
+}
+
+.label-author{
+    padding: 10px;
+}
+
+.form-submit{
+   padding-bottom: 20px;
 }

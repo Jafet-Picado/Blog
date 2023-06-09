@@ -82,9 +82,18 @@ namespace Blog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
-
             if (ModelState.IsValid)
             {
+                var currentDate = DateTime.Today;
+                var startDate = new DateTime(2023, 1, 1);
+                var endDate = currentDate;
+                var totalDays = (endDate - startDate).Days;
+                var random = new Random();
+                var randomDays = random.Next(totalDays);
+                var randomDate = startDate.AddDays(randomDays);
+
+                blogPost.CreatedAt = randomDate;
+
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     byte[] imageBytes = null;
