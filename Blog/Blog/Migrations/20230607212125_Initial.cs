@@ -178,9 +178,10 @@ namespace Blog.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true)
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,12 +230,12 @@ namespace Blog.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "1", "1c4333b4-23b7-43ae-b4ae-4dc44fbef12c", "Admin", "ADMIN" });
+                values: new object[] { "1", "ba1b6350-3ea3-46d2-9802-bcb090dc53af", "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "2", "78e3c4b3-fac3-44c4-b555-6bcdbf615d9d", "Author", "AUTHOR" });
+                values: new object[] { "2", "ae4c4f37-0b74-4dc2-be03-15b51bf326c9", "Author", "AUTHOR" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

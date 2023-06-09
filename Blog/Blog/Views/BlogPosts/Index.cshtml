@@ -54,8 +54,11 @@
             }
         </div>
         <div class="col-lg-3" style="justify-self: end;">
-            <h2 style="padding-left: 20px;">Sección 2</h2>
-            <p style="padding-left: 20px;">Contenido de la sección 2.</p>
+            <h3>Categor&iacute;as</h3>
+            <div id="listOfCategories"></div>
+            <br>
+            <h3>Autores: </h3>
+            <div id="listOfAuthors"></div>
         </div>
     </div>
     <div class="row">
@@ -73,3 +76,55 @@
         </div>
     </div>
 </div>
+
+
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function fetchCategories() {
+
+                fetch('/Categories/GetAllCategories')
+                    .then(response => response.json())
+                    .then(categories => {
+                        const container = document.getElementById('listOfCategories');
+                        container.innerHTML = '';
+                        container.classList.add('list-group')
+                        categories.forEach(category => {
+                            const item = document.createElement('a');
+                            item.classList.add('list-group-item', 'list-group-item-action');
+                            item.textContent = category.name;
+                            item.href = `/BlogPosts/PostsByCategory/${category.id}`;
+                            container.appendChild(item);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading categories: ', error);
+                    })
+            }
+
+            function fetchAuthors() {
+                const container = document.getElementById('listOfAuthors');
+                container.innerHTML = '';
+                container.classList.add('list-group');
+
+                fetch('/BlogPosts/GetAllAuthors')
+                    .then(response => response.json())
+                    .then(authors => {
+                        authors.forEach(author => {
+                            const item = document.createElement('a');
+                            item.classList.add('list-group-item', 'list-group-item-action');
+                            item.textContent = author.name;
+                            item.href = `/BlogPosts/PostsByAuthor/${author.id}`;
+                            container.appendChild(item);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading categories: ', error);
+                    })
+            }
+
+            fetchCategories();
+            fetchAuthors();
+        });
+    </script>
+}

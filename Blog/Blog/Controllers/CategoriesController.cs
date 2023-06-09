@@ -159,5 +159,18 @@ namespace Blog.Controllers
         {
           return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public IActionResult GetAllCategories()
+        {
+            var categories = _context.Categories
+                .Select(c => new
+                {
+                    c.Name,
+                    c.Id
+                })
+                .ToList();
+
+            return Json(categories);
+        }
     }
 }

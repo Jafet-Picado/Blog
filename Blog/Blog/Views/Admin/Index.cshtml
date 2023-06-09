@@ -30,8 +30,7 @@
                     container.insertAdjacentHTML('beforeend', startHtml);
 
                     const table = document.createElement('table');
-                    table.classList.add('table');
-                    table.classList.add('table-striped');
+                    table.classList.add('table', 'table-striped');
 
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `
@@ -43,8 +42,7 @@
                     `;
                     table.appendChild(headersRow);
 
-                    blogPosts.forEach(blogPost => {
-                        var categoryName = blogPost.category ? blogPost.category : 'Sin categoría';
+                    blogPosts.forEach(blogPost => {                        
                         const row = document.createElement('tr');
                         row.innerHTML = `                                                     
                             <td>
@@ -57,7 +55,7 @@
                                 ${blogPost.createdAt}
                             </td>
                             <td>
-                                ${categoryName}
+                                ${blogPost.category}
                             </td>
                             <td>
                                 <a href="/BlogPosts/Edit/${blogPost.id}" class="btn custom-edit">Editar</a>
@@ -81,8 +79,7 @@
                 .then(response => response.json())
                 .then(comments => {                                       
                     const table = document.createElement('table');
-                    table.classList.add('table');
-                    table.classList.add('table-striped');
+                    table.classList.add('table', 'table-striped');
 
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `
@@ -136,8 +133,7 @@
 
                     container.insertAdjacentHTML('beforeend', startHtml);
                     const table = document.createElement('table');
-                    table.classList.add('table');
-                    table.classList.add('table-striped');
+                    table.classList.add('table', 'table-striped');
 
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `                                        
@@ -173,8 +169,7 @@
                 .then(response => response.json())
                 .then(users => {
                     const table = document.createElement('table');
-                    table.classList.add('table');
-                    table.classList.add('table-striped');
+                    table.classList.add('table','table-striped');                    
 
                     const headersRow = document.createElement('tr');
                     headersRow.innerHTML = `
