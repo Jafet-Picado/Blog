@@ -5,64 +5,65 @@
 }
 
 <div class="container">
-    <div class="col-sm-10">
+    <div class="form-container wider-details form-text ">
         <h1>@Html.DisplayFor(model => model.Title)</h1>
-    </div>
-    <hr />
-    <div class="row">
-        <div class = "col-sm-2">
-            <h4>Contenido:</h4>
+        <div class="row">
+            <div class="col-sm-2">
+                <label>Contenido:</label>
+            </div>
+            <div class="col-sm-10">
+                <p>@Html.DisplayFor(model => model.Content)</p>
+            </div>
+            <div class="col-sm-2">
+                <label>Creado en:</label>
+            </div>
+            <div class="col-sm-10">
+                <p>@Html.DisplayFor(model => model.CreatedAt)</p>
+            </div>
+            <div class="col-sm-2">
+                <label>Actualizado en:</label>
+            </div>
+            <div class="col-sm-10">
+                <p>@Html.DisplayFor(model => model.UpdatedAt)</p>
+            </div>
+            <div class="col-sm-2">
+                <label>Autor:</label>
+            </div>
+            <div class="col-sm-10">
+                <p>@Html.DisplayFor(model => model.Author.FirstName) @Html.DisplayFor(model => model.Author.LastName)</p>
+            </div>
+            <div class="col-sm-2">
+                <label>Categoria:</label>
+            </div>
+            <div class="col-sm-10">
+                <p>@Html.DisplayFor(model => model.CategoryId)</p>
+            </div>
+            <div class="col-sm-2">
+                <label>Imagen:</label>
+            </div>
+            <div class="col-sm-10">
+                @{
+                    var base64String = Convert.ToBase64String(Model.Image);
+                    var imageSource = $"data:image/jpeg;base64,{base64String}";
+                }
+                <img src="@imageSource" alt="Post Image" class="details-image" />
+            </div>
         </div>
-        <div class = "col-sm-10">
-            <p>@Html.DisplayFor(model => model.Content) </p>
-        </div>
-        <div class = "col-sm-2">
-            <h4>Creado en:</h4>
-        </div>
-        <div class = "col-sm-10">
-            <p>@Html.DisplayFor(model => model.CreatedAt)</p>
-        </div>
-        <div class = "col-sm-2">
-            <h4>Actualizado en:</h4>
-        </div>
-        <div class = "col-sm-10">
-            <p>@Html.DisplayFor(model => model.UpdatedAt)</p>
-        </div>
-        <div class = "col-sm-2">
-            <h4>Autor:</h4>
-        </div>
-        <div class = "col-sm-10">
-            <p>@Html.DisplayFor(model => model.Author.FirstName) @Html.DisplayFor(model => model.Author.LastName)</p>
-        </div>
-        <div class = "col-sm-2">
-            <h4>Categoria:</h4>
-        </div>
-        <div class = "col-sm-10">
-            <p>@Html.DisplayFor(model => model.CategoryId)</p>
-        </div>
-        <div class="col-sm-2">
-            <h4>Imagen:</h4>
-        </div>
-       <div class="col-sm-12">
-            @{
-                var base64String = Convert.ToBase64String(Model.Image);
-                var imageSource = $"data:image/jpeg;base64,{base64String}";
-            }
-            <img src="@imageSource" alt="Post Image" class="index-image" />
-        </div>
+
+
+    <div class="text-center">
+            <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
+            <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>
     </div>
 
-    <div style="padding:10px;">
-        <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@Model?.Id">Editar</a>
-        <a asp-action="Index" class="btn btn-info">Volver a la lista</a>
-    </div>
-    <div class="card-no-border">
-        <h4 id="prueba">Comentarios</h4>
-        <form id="commentForm" onsubmit="CreateComment(event)">        
+        <label id="prueba">Comentarios</label>
+        <form id="commentForm" onsubmit="CreateComment(event)">
             <textarea id="commentText" class="form-control" name="commentText" placeholder="Añada un nuevo comentario" maxlength="300" cols="100" rows="5"></textarea>
             <br />
-            <button class="btn btn-secondary btn-sm" type="submit">Agregar</button>
+            <button class="btn btn-details btn-agregar" type="submit">Agregar</button>
         </form>
+
+        <br />
         <br />
         <div class="comment-section" id="commentsSection">
         </div>
