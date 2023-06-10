@@ -1,9 +1,43 @@
 ﻿@model Blog.Models.BlogPost
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear post";
 }
 
+<div class="form-container wider-create">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-floating form-text">
+            <input asp-for="Title" class="form-control" />
+            <label asp-for="Title">Título</label>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <input asp-for="Content" class="form-control" />
+            <label asp-for="Content">Contenido</label>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <br>
+            <input type="file" id="imageFile" name="imageFile" class="form-control" />
+            <label asp-for="Image">Imagen</label>
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <br>
+            <input asp-for="UpdatedAt" class="form-control" />
+            <label asp-for="UpdatedAt">Actualizado en</label>
+            <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <input asp-for="CategoryId" class="form-control" />
+            <label asp-for="CategoryId">Categoría ID</label>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Crear" id="form-submit" class="extended-submit" />
+    </form>
+</div>
 <h1>Create</h1>
 
 <h4>BlogPost</h4>
