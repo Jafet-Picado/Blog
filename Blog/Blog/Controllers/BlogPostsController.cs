@@ -284,13 +284,36 @@ namespace Blog.Controllers
             var model = _context.BlogPosts
                 .Include(b => b.Author)
                 .Include(c => c.Comments)
+                .Where(p => p.AuthorId == id)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Where(p => p.AuthorId == id)
+                .Take(pageSize)                
                 .ToList();
 
-            var totalCount = _context.BlogPosts.Count();
+            var totalCount = _context.BlogPosts.Where(p => p.AuthorId == id).Count();
+            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            ViewBag.PageCount = pageCount;
+            ViewBag.CurrentPage = page;
+            return View(model);
+        }
+
+        public IActionResult PostsByCategory(int id, int page = 1)
+        {
+
+            int pageSize = 5; // Número de publicaciones por página
+
+            var model = _context.BlogPosts
+                .Include(c => c.Category)
+                .Include(c => c.Author)
+                .Include(c => c.Comments)
+                .Where(p => p.CategoryId == id)              
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)                
+                .ToList();
+
+            var totalCount = _context.BlogPosts.Where(p => p.CategoryId == id).Count();
             var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
 
             ViewBag.PageCount = pageCount;

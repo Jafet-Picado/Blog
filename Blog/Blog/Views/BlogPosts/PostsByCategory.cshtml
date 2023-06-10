@@ -2,11 +2,11 @@
 
 @{
     ViewData["Title"] = "Author";
-    var postsAuthorId = Model.First().AuthorId;
+    var postsCategoryId = Model.First().CategoryId;
 }
 
 <div class="container">
-    <h1 class="title">@Model.First().Author.FirstName @Model.First().Author.LastName</h1>
+    <h1 class="title">@Model.First().Category.Name</h1>
     <div class="row gx-md-5">
         <div class="col-lg-9" style="justify-self: center;">
             @foreach (var item in Model)
@@ -34,7 +34,7 @@
                     <div class="box d-flex align-items-center">
                         @if (item.Author is not null)
                         {
-                            <p class="mr-3 mr-3-with-padding">Autor: <a href="#" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
+                            <p class="mr-3 mr-3-with-padding">Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
                         }
                         else
                         {
@@ -55,10 +55,10 @@
         </div>
         <div class="col-lg-3" style="justify-self: end;">
             <h3>Categor&iacute;as</h3>
-            <div id="listOfCategories"></div>
+            <div id="listOfCategories" data-categoryId="@postsCategoryId"></div>
             <br>
             <h3>Autores: </h3>
-            <div id="listOfAuthors" data-authorid="@postsAuthorId"></div>
+            <div id="listOfAuthors"></div>
         </div>
     </div>
     <div class="row">
@@ -68,7 +68,7 @@
                     @for (int i = 1; i <= ViewBag.PageCount; i++)
                     {
                         <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("PostsByAuthor", new { id = postsAuthorId, page = i })">@i</a>
+                            <a class="page-link" href="@Url.Action("PostsByCategory", new { id = postsCategoryId, page = i })">@i</a>
                         </li>
                     }
                 </ul>
@@ -82,18 +82,26 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             function fetchCategories() {
+                const container = document.getElementById('listOfCategories');                
+                container.innerHTML = '';
+                container.classList.add('list-group')
+
+                const categoryId = parseInt(container.dataset.categoryid);
 
                 fetch('/Categories/GetAllCategories')
                     .then(response => response.json())
                     .then(categories => {
-                        const container = document.getElementById('listOfCategories');
-                        container.innerHTML = '';
-                        container.classList.add('list-group')
+
                         categories.forEach(category => {
                             const item = document.createElement('a');
                             item.classList.add('list-group-item', 'list-group-item-action');
                             item.textContent = category.name;
                             item.href = `/BlogPosts/PostsByCategory/${category.id}`;
+
+                            if (category.id === categoryId) {
+                                item.classList.add('active', 'disabled');
+                            }
+
                             container.appendChild(item);
                         });
                     })
@@ -107,8 +115,6 @@
                 container.innerHTML = '';
                 container.classList.add('list-group');
 
-                const authorId = container.dataset.authorid;
-
                 fetch('/BlogPosts/GetAllAuthors')
                     .then(response => response.json())
                     .then(authors => {
@@ -117,11 +123,6 @@
                             item.classList.add('list-group-item', 'list-group-item-action');
                             item.textContent = author.name;
                             item.href = `/BlogPosts/PostsByAuthor/${author.id}`;
-
-                            if (author.id === authorId) {
-                                item.classList.add('active', 'disabled');
-                            }
-
                             container.appendChild(item);
                         });
                     })

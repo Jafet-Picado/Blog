@@ -163,6 +163,8 @@ namespace Blog.Controllers
         public IActionResult GetAllCategories()
         {
             var categories = _context.Categories
+                .Include(c => c.BlogPosts)
+                .Where(c => c.BlogPosts != null && c.BlogPosts.Count > 0)
                 .Select(c => new
                 {
                     c.Name,

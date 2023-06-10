@@ -14,7 +14,10 @@
                         var base64String = Convert.ToBase64String(item.Image);
                         var imageSource = $"data:image/jpeg;base64,{base64String}";
                     }
-                    <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                    <div>
+                        <a href="/BlogPosts/Details/@item.Id" class="h3">@item.Title</a>
+                        <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small>
+                    </div>                    
                     <div class="image-container">
                         <img src="@imageSource" alt="Post Image" class="index-image" />
                     </div>
@@ -109,7 +112,7 @@
                             const item = document.createElement('a');
                             item.classList.add('list-group-item', 'list-group-item-action');
                             item.textContent = author.name;
-                            item.href = `/BlogPosts/PostsByAuthor/${author.id}`;
+                            item.href = `/BlogPosts/PostsByAuthor/${author.id}`;                            
                             container.appendChild(item);
                         });
                     })
