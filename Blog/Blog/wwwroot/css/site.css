@@ -407,7 +407,25 @@ form .form-area {
     outline: none;
 }
 
-    .btn-details:hover {
+    .btn-details:hover {        
+        border-color: #2691d9;
+        transition: .5s;
+    }
+
+.btn-delete {
+    width: 140px;
+    height: 50px;
+    border: 1px solid;
+    background: #dc3545;
+    border-radius: 25px;
+    font-size: 18px;
+    color: #e9f4fb;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+}
+
+    .btn-delete:hover {        
         border-color: #2691d9;
         transition: .5s;
     }

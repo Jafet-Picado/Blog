@@ -32,7 +32,8 @@
     <br><br>
     <div class="text-center">
         <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
-        <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>
+        <button type="button" class="btn btn-delete" onclick="location.href='@Url.Action("Delete", new { id = Model?.Id })'">Eliminar</button>
+        <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>        
     </div>
     <label id="prueba">Comentarios</label>
     <form id="commentForm" onsubmit="CreateComment(event)">

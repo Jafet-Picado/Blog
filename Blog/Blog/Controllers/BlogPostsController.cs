@@ -177,6 +177,7 @@ namespace Blog.Controllers
                     originalBlogPost.Title = blogPost.Title;
                     originalBlogPost.Content = blogPost.Content;
                     originalBlogPost.UpdatedAt = DateTime.Now;
+                    originalBlogPost.CategoryId = blogPost.CategoryId;
                     _context.Update(originalBlogPost);
                     await _context.SaveChangesAsync();
                 }
