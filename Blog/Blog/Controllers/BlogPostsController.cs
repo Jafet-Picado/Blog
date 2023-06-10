@@ -70,6 +70,8 @@ namespace Blog.Controllers
         [Authorize(Roles ="Author")]
         public IActionResult Create()
         {
+            List<Category> categories = _context.Categories.ToList();            
+            ViewBag.Categories = categories;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
             return View();
