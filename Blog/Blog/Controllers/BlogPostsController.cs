@@ -67,7 +67,7 @@ namespace Blog.Controllers
         }
 
         // GET: BlogPosts/Create
-        [Authorize(Roles ="Author")]
+        [Authorize(Roles ="Admin, Author")]
         public IActionResult Create()
         {
             List<Category> categories = _context.Categories.ToList();            
@@ -82,6 +82,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles ="Admin, Author")]
         public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
@@ -126,6 +127,7 @@ namespace Blog.Controllers
         }
 
         // GET: BlogPosts/Edit/5        
+        [Authorize(Roles = "Admin, Author")]
         public async Task<IActionResult> Edit(int? id)
         {            
             if (id == null || _context.BlogPosts == null)
@@ -142,7 +144,11 @@ namespace Blog.Controllers
             ViewBag.Categories = categories;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
-            return View(blogPost);
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == blogPost.AuthorId)
+            {
+                return View(blogPost);
+            }
+            return NotFound();
         }
 
         // POST: BlogPosts/Edit/5
@@ -150,6 +156,7 @@ namespace Blog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Author")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
             if (id != blogPost.Id)
@@ -158,48 +165,53 @@ namespace Blog.Controllers
             }
 
             if (ModelState.IsValid)
-            {                
-                try
+            {
+                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == blogPost.AuthorId)
                 {
-                    var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
-                    if (imageFile != null && imageFile.Length > 0)
+                    try
                     {
-                        byte[]? imageBytes = null;
-
-                        using (var memoryStream = new MemoryStream())
+                        var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
+                        if (imageFile != null && imageFile.Length > 0)
                         {
-                            imageFile.CopyTo(memoryStream);
-                            imageBytes = memoryStream.ToArray();
-                        }
+                            byte[]? imageBytes = null;
 
-                        originalBlogPost.Image = imageBytes;
-                    }                    
-                    originalBlogPost.Title = blogPost.Title;
-                    originalBlogPost.Content = blogPost.Content;
-                    originalBlogPost.UpdatedAt = DateTime.Now;
-                    originalBlogPost.CategoryId = blogPost.CategoryId;
-                    _context.Update(originalBlogPost);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BlogPostExists(blogPost.Id))
-                    {
-                        return NotFound();
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                imageFile.CopyTo(memoryStream);
+                                imageBytes = memoryStream.ToArray();
+                            }
+
+                            originalBlogPost.Image = imageBytes;
+                        }
+                        originalBlogPost.Title = blogPost.Title;
+                        originalBlogPost.Content = blogPost.Content;
+                        originalBlogPost.UpdatedAt = DateTime.Now;
+                        originalBlogPost.CategoryId = blogPost.CategoryId;
+                        _context.Update(originalBlogPost);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!BlogPostExists(blogPost.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
-            return View(blogPost);
+            
+            return NotFound();                        
         }
 
         // GET: BlogPosts/Delete/5
+        [Authorize(Roles = "Admin, Author")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.BlogPosts == null)
@@ -215,13 +227,17 @@ namespace Blog.Controllers
             {
                 return NotFound();
             }
-
-            return View(blogPost);
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == blogPost.AuthorId)
+            {
+                return View(blogPost);
+            }
+            return NotFound();
         }
 
         // POST: BlogPosts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Author")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.BlogPosts == null)
@@ -229,13 +245,16 @@ namespace Blog.Controllers
                 return Problem("Entity set 'BlogDbContext.BlogPosts'  is null.");
             }
             var blogPost = await _context.BlogPosts.FindAsync(id);
-            if (blogPost != null)
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == blogPost.AuthorId)
             {
-                _context.BlogPosts.Remove(blogPost);
+                if (blogPost != null)
+                {
+                    _context.BlogPosts.Remove(blogPost);
+                }
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
         private bool BlogPostExists(int id)

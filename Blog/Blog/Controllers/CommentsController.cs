@@ -9,6 +9,7 @@ using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
@@ -22,34 +23,7 @@ namespace Blog.Controllers
             _userManager = userManager;
         }
 
-        // GET: Comments
-        public async Task<IActionResult> Index()
-        {
-            var blogDbContext = _context.Comments.Include(c => c.Author).Include(c => c.BlogPost);
-            return View(await blogDbContext.ToListAsync());
-        }
-
-        // GET: Comments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Comments == null)
-            {
-                return NotFound();
-            }
-
-            var comment = await _context.Comments
-                .Include(c => c.Author)
-                .Include(c => c.BlogPost)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return View(comment);
-        }
-
-        // GET: Comments/Create
+        // GET: Comments/Create        
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
@@ -87,8 +61,9 @@ namespace Blog.Controllers
         }
 
         // GET: Comments/Edit/5
+        [Authorize(Roles ="Admin, Author")]
         public async Task<IActionResult> Edit(int? id)
-        {
+        {            
             if (id == null || _context.Comments == null)
             {
                 return NotFound();
@@ -103,7 +78,11 @@ namespace Blog.Controllers
             }
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
             ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
-            return View(comment);
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
+            {
+                return View(comment);
+            }
+            return NotFound();
         }
 
         // POST: Comments/Edit/5
@@ -120,27 +99,31 @@ namespace Blog.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
                 {
-                    _context.Update(comment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CommentExists(comment.Id))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(comment);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!CommentExists(comment.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);
-            return View(comment);
+            ViewData["BlogPostId"] = new SelectList(_context.BlogPosts, "Id", "Id", comment.BlogPostId);                        
+            
+            return NotFound();            
         }
 
         // GET: Comments/Delete/5
@@ -159,8 +142,11 @@ namespace Blog.Controllers
             {
                 return NotFound();
             }
-
-            return View(comment);
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
+            {
+                return View(comment);
+            }
+            return NotFound();
         }
 
         // POST: Comments/Delete/5
@@ -173,13 +159,17 @@ namespace Blog.Controllers
                 return Problem("Entity set 'BlogDbContext.Comments'  is null.");
             }
             var comment = await _context.Comments.FindAsync(id);
-            if (comment != null)
+            if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
             {
-                _context.Comments.Remove(comment);
+                if (comment != null)
+                {
+                    _context.Comments.Remove(comment);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
         private bool CommentExists(int id)
