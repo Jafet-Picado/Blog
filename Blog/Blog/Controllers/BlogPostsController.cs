@@ -166,11 +166,11 @@ namespace Blog.Controllers
 
             if (ModelState.IsValid)
             {
-                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == blogPost.AuthorId)
+                var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
+                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == originalBlogPost.AuthorId)
                 {
                     try
-                    {
-                        var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
+                    {                           
                         if (imageFile != null && imageFile.Length > 0)
                         {
                             byte[]? imageBytes = null;

@@ -92,7 +92,7 @@
                         const date = new Date(comment.createdAt);
                         const formattedDate = date.toLocaleDateString();
                         const deleteButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Delete/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Borrar"><i class="bi bi-trash3"></i></a>` : '';
-                        const editButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil-square"></i></a>` : '';
+                        const editButton = (comment.authorId === userId) ? `<a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil-square"></i></a>` : '';
                         commentElement.innerHTML = `
                                         <h5 class="comment-title">${comment.authorName}                                        
                                             ${deleteButton}

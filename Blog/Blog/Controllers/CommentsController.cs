@@ -100,11 +100,13 @@ namespace Blog.Controllers
 
             if (ModelState.IsValid)
             {
-                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
+                var originalComment = _context.Comments.Find(comment.Id);
+                if (User.IsInRole("Admin") || _userManager.GetUserId(User) == originalComment.AuthorId)
                 {
                     try
                     {
-                        _context.Update(comment);
+                        originalComment.Text = comment.Text;
+                        _context.Update(originalComment);
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
