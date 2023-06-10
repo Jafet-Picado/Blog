@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BlogUser> SignInManager
+@model Blog.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Details";
+    var base64String = Convert.ToBase64String(Model.Image);
+    var imageSource = $"data:image/jpeg;base64,{base64String}";
+}
+
+<div class="container">
+    <div class="form-container wider-details form-text ">        
+        <h1>@Html.DisplayFor(model => model.Title)</h1>
+        <h6>Creado el @Html.DisplayFor(model => model.CreatedAt)</h6>
+        @if(Model.UpdatedAt is not null)
+        {
+            <h6>Actualizado el @Html.DisplayFor(model => model.UpdatedAt)</h6>
+        }                                
+        <h6>
+            Categoría:
+            <a href="/BlogPosts/PostsByCategory/@Model.CategoryId" class="badge rounded-pill bg-secondary">@Model.Category.Name</a>
+        </h6>
+        <h6>
+            Author:
+            <a href="/BlogPosts/PostsByAuthor/@Model.AuthorId" class="badge rounded-pill bg-secondary">@Model.Author.FirstName @Model.Author.LastName</a>
+        </h6>
+        <hr />        
+        <div>
+            <img src="@imageSource" alt="Post Image" class="details-image" />
+        </div>        
+        <hr />        
+        <p>@Html.DisplayFor(model => model.Content)</p>        
+    </div>
+    <br><br>
+    <div class="text-center">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            if (User.IsInRole("Admin") || SignInManager.UserManager.GetUserId(User) == Model.AuthorId)
+            {
+                <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
+                <button type="button" class="btn btn-delete" onclick="location.href='@Url.Action("Delete", new { id = Model?.Id })'">Eliminar</button>
+            }            
+        }        
+        <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>        
+    </div>
+    <label id="prueba">Comentarios</label>
+    <form id="commentForm" onsubmit="CreateComment(event)">
+        <textarea id="commentText" class="form-control" name="commentText" placeholder="Añada un nuevo comentario" maxlength="300" cols="100" rows="5"></textarea>
+        <br>
+        <button class="btn btn-details btn-agregar" type="submit">Agregar</button>
+    </form>
+    <br><br>
+    <div class="comment-section" id="commentsSection" data-userid="@SignInManager.UserManager.GetUserId(User)"
+    data-isadmin="@User.IsInRole("Admin").ToString()"></div>
+</div>
+
+
+@section scripts {
+    <script>
+        function CreateComment(event){
+            event.preventDefault();
+
+            var text = document.getElementById('commentText').value;            
+
+            fetch('/Comments/Create?text=' + text + '&blogPostId=' + @Model.Id, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },                
+            })
+            .then(response => response.json())
+            .then(data => {
+                fetchComments();             
+            })
+            .catch(error => {
+                console.error('Error creating comment: ',error);
+            })
+
+            document.getElementById('commentForm').reset();
+        }
+
+        function fetchComments() {
+            fetch('/Comments/GetComments?blogPostId='+@Model?.Id)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsContainer = document.getElementById('commentsSection');
+                    commentsContainer.innerHTML = '';
+                    const userId = commentsContainer.dataset.userid;
+                    const isAdmin = commentsContainer.dataset.isadmin === 'True';
+                    comments.forEach(comment => {                                                
+                        const commentElement = document.createElement('div');
+                        const date = new Date(comment.createdAt);
+                        const formattedDate = date.toLocaleDateString();
+                        const deleteButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Delete/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Borrar"><i class="bi bi-trash3"></i></a>` : '';
+                        const editButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil-square"></i></a>` : '';
+                        commentElement.innerHTML = `
+                                        <h5 class="comment-title">${comment.authorName}                                        
+                                            ${deleteButton}
+                                            ${editButton}
+                                        </h5>
+                                        <p class="comment-date">${formattedDate}</p>
+                                        <p class="comment-date">${comment.email}</p>
+                                        <p comment-content>${comment.text}</p>
+                                        <hr />
+                                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching comments:', error);
+                });
+        }
+
+        fetchComments();
+    </script>
+}

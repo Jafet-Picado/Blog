@@ -1,0 +1,18 @@
+﻿@model Blog.Models.Comment
+
+@{
+    ViewData["Title"] = "Eliminar comentario";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h3>¿Está seguro que desea borrar su comentario?</h3>    
+<hr />    
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+        
+    <div class="signup-link">
+        <input type="submit" value="Borrar" class="btn btn-delete" />
+        <br>
+        <a href="/BlogPosts/Details/@Model.BlogPost.Id">Regresar al post</a>
+    </div>        
+</form>

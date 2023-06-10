@@ -1,0 +1,40 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Inicio de sesión";
+}
+
+<div class="form-container">
+    <h1>@ViewData["Title"]</h1>
+    <form id="account" method="post">                
+        <div asp-validation-summary="ModelOnly" class="text-danger" hidden="true"></div>
+        <div class="form-floating form-text">
+            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+            <label asp-for="Input.Email">Correo electr&oacute;nico</label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+            <label asp-for="Input.Password">Contraseña</label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <div>
+            <div class="checkbox signup-text">
+                <label asp-for="Input.RememberMe">
+                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                    Mantener sesión iniciada
+                </label>
+            </div>
+        </div>        
+        <input id="form-submit" type="submit" value="Iniciar sesión"/>        
+        <div class="signup-link">                          
+            ¿No tienes una cuenta?
+            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrate aquí</a>            
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

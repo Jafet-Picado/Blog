@@ -1,0 +1,18 @@
+﻿@model Blog.Models.BlogUser
+
+@{
+    ViewData["Title"] = "Eliminar usuario";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h3>¿Está seguro que desea borrar a este usuario?</h3>
+<hr />
+<form asp-action="DeleteUserConfirmed" asp-controller="Admin">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="signup-link">
+        <input type="submit" value="Borrar" class="btn btn-delete" />
+        <br>
+        <a href="/Admin/">Regresar al panel</a>
+    </div>
+</form>   

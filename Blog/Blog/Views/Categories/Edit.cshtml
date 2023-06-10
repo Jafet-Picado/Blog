@@ -1,0 +1,22 @@
+﻿@model Blog.Models.Category
+
+@{
+    ViewData["Title"] = "Editar categoría";
+}
+
+<div class="form-container wider-create">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-floating form-text">
+            <input asp-for="Name" class="form-control" />
+            <label asp-for="Name">Nombre</label>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Guardar" id="form-submit" class="extended-submit" />
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,207 @@
+﻿@{
+    ViewData["Title"] = "Panel Administrativo";
+}
+
+<h1 class="text-center">Panel administrativo</h1>
+<div class="option-buttons">
+    <button type="button" onclick="publicationsClick()">Publicaciones</button>    
+    <button type="button" onclick="commentsClick()">Comentarios</button>
+    <button type="button" onclick="categoriesClick()">Categorías</button>
+    <button type="button" onclick="usersClick()">Usuarios</button>
+</div>
+<br>
+<br>
+<div id="panelContainer"></div>
+
+@section scripts{
+    <script>
+        function publicationsClick() {
+            const container = document.getElementById('panelContainer');
+            container.innerHTML = '';
+            fetch('/Admin/GetBlogPosts')
+                .then(response => response.json())
+                .then(blogPosts => {                    
+                    const startHtml = `
+                        <p class="create-link">
+                            <a href="/BlogPosts/Create/">Crear publicaci&oacute;n</a>
+                        </p>
+                    `;
+
+                    container.insertAdjacentHTML('beforeend', startHtml);
+
+                    const table = document.createElement('table');
+                    table.classList.add('table', 'table-striped');
+
+                    const headersRow = document.createElement('tr');
+                    headersRow.innerHTML = `
+                        <th>Titulo</th>
+                        <th>Autor</th>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Controles</th>
+                    `;
+                    table.appendChild(headersRow);
+
+                    blogPosts.forEach(blogPost => {                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `                                                     
+                            <td>
+                                ${blogPost.title}
+                            </td>
+                            <td>
+                                ${blogPost.authorName}
+                            </td>
+                            <td>
+                                ${blogPost.createdAt}
+                            </td>
+                            <td>
+                                ${blogPost.category}
+                            </td>
+                            <td>
+                                <a href="/BlogPosts/Edit/${blogPost.id}" class="btn custom-edit">Editar</a>
+                                <a href="/BlogPosts/Details/${blogPost.id}" class="btn custom-details">Detalles</a>
+                                <a href="/BlogPosts/Delete/${blogPost.id}" class="btn custom-delete">Borrar</a>
+                            </td>                                                    
+                        `;
+                        table.appendChild(row);
+                    })                    
+                    container.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error loading posts: ', error);
+                })            
+        }
+
+        function commentsClick() {
+            const container = document.getElementById('panelContainer');
+            container.innerHTML = '';
+            fetch('/Admin/GetComments')
+                .then(response => response.json())
+                .then(comments => {                                       
+                    const table = document.createElement('table');
+                    table.classList.add('table', 'table-striped');
+
+                    const headersRow = document.createElement('tr');
+                    headersRow.innerHTML = `
+                                <th>Autor</th>
+                                <th>Correo</th>
+                                <th>Texto</th>
+                                <th>Fecha</th>                                
+                                <th>Controles</th>
+                            `;
+                    table.appendChild(headersRow);
+
+                    comments.forEach(comments => {                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                    <td>
+                                        ${comments.authorName}
+                                    </td>
+                                    <td>
+                                        ${comments.email}
+                                    </td>
+                                    <td>
+                                        ${comments.text}
+                                    </td>
+                                    <td>
+                                        ${comments.createdAt}
+                                    </td>                                    
+                                    <td>
+                                        <a href="/Comments/Delete/${comments.id}" class="btn custom-delete">Borrar</a>
+                                    </td>
+                                `;
+                        table.appendChild(row);
+                    })
+                    container.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error loading comments: ', error);
+                })
+        }
+
+        function categoriesClick() {
+            const container = document.getElementById('panelContainer');
+            container.innerHTML = '';
+            fetch('/Admin/GetCategories')
+                .then(response => response.json())
+                .then(categories => {
+                    const startHtml = `
+                                <p class="create-link">
+                                    <a href="/Categories/Create/">Crear categor&iacute;a</a>
+                                </p>
+                            `;
+
+                    container.insertAdjacentHTML('beforeend', startHtml);
+                    const table = document.createElement('table');
+                    table.classList.add('table', 'table-striped');
+
+                    const headersRow = document.createElement('tr');
+                    headersRow.innerHTML = `                                        
+                                        <th>Nombre</th>                                        
+                                        <th>Controles</th>
+                                    `;
+                    table.appendChild(headersRow);
+
+                    categories.forEach(category => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                            <td>
+                                                ${category.name}
+                                            </td>                                            
+                                            <td>
+                                                <a href="/Categories/Edit/${category.id}" class="btn custom-edit">Editar</a>
+                                                <a href="/Categories/Delete/${category.id}" class="btn custom-delete">Borrar</a>
+                                            </td>
+                                        `;
+                        table.appendChild(row);
+                    })
+                    container.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error loading categories: ', error);
+                })
+        }
+
+        function usersClick() {
+            const container = document.getElementById('panelContainer');
+            container.innerHTML = '';
+            fetch('/Admin/GetUsers')
+                .then(response => response.json())
+                .then(users => {
+                    const table = document.createElement('table');
+                    table.classList.add('table','table-striped');                    
+
+                    const headersRow = document.createElement('tr');
+                    headersRow.innerHTML = `
+                                        <th>Identificador</th>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>                                        
+                                        <th>Controles</th>
+                                    `;
+                    table.appendChild(headersRow);                    
+                    users.forEach(user => {                                                
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                            <td>
+                                                ${user.id}
+                                            </td>
+                                            <td>
+                                                ${user.name}
+                                            </td>
+                                            <td>
+                                                ${user.email}
+                                            </td>                                            
+                                            <td>
+                                                <a href="/Admin/DeleteUser/${user.id}" class="btn custom-delete">Borrar</a>
+                                            </td>
+                                        `;
+                        table.appendChild(row);
+                    })
+                    container.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error loading users: ', error);
+                })
+        }
+    </script>
+}

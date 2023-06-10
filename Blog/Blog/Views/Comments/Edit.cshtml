@@ -1,0 +1,25 @@
+﻿@model Blog.Models.Comment
+
+@{
+    ViewData["Title"] = "Editar comentario";
+}
+
+<div class="form-container wider-create">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-area">
+            <textarea asp-for="Text" id="contentText" class="form-control" cols="100" rows="5" maxlength="300"></textarea>
+            <span asp-validation-for="Text" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Guardar" id="form-submit" class="extended-submit" />
+    </form>
+</div>
+
+<div class="signup-link">
+    <a href="/BlogPosts/Details/@Model.BlogPost.Id">Regresar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

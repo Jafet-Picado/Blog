@@ -1,0 +1,41 @@
+﻿@model Blog.Models.BlogPost
+
+@{
+    ViewData["Title"] = "Crear post";
+}
+
+<div class="form-container wider-create">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-floating form-text">
+            <input asp-for="Title" class="form-control" />
+            <label asp-for="Title">Título</label>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-area">
+            <textarea asp-for="Content" id="contentText" class="form-control" cols="100" rows="15" placeholder="Escriba el contenido de su post"></textarea>            
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <br>
+            <input type="file" id="imageFile" name="imageFile" class="form-control" />
+            <label asp-for="Image">Imagen</label>
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div>
+        <div class="form-floating form-text">
+            <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control"></select>
+            <label asp-for="CategoryId">Categoría</label>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Crear" id="form-submit" class="extended-submit" />
+    </form>
+</div>
+
+<div class="signup-link">
+    <a asp-action="Index">Regresar al inicio</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
