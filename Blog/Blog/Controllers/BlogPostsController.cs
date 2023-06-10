@@ -272,30 +272,6 @@ namespace Blog.Controllers
             return Json(comments);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateComment([FromBody] Comment comment)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    comment.AuthorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    comment.CreatedAt = DateTime.Now;
-                    _context.Add(comment);
-                    await _context.SaveChangesAsync();
-
-                    return Json(new { success = true });
-                }
-
-                return BadRequest(ModelState);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Failed to create comment." });
-            }
-        }
-
         public IActionResult PostsByAuthor(string id, int page=1)
         {            
 
