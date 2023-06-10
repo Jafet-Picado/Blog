@@ -1,57 +1,52 @@
 ﻿@model IEnumerable<Blog.Models.BlogPost>
 
 @{
-    ViewData["Title"] = "Index";
-    var pageSize = 5; // Cantidad de elementos por página
-    var pageCount = (int)Math.Ceiling((double)Model.Count() / pageSize);
+    ViewData["Title"] = "Index";  
 }
 
 <div class="container">
     <div class="row gx-md-5">
-        <div class="col-lg-9" style="justify-self: center;">
-            @for (int i = 0; i < pageCount; i++)
+        <div class="col-lg-9" style="justify-self: center;">            
+            @foreach (var item in Model)
             {
-                @foreach (var item in Model.Skip(i * pageSize).Take(pageSize))
-                {
-                    <div class="card-no-border">
-                        @{
-                            var base64String = Convert.ToBase64String(item.Image);
-                            var imageSource = $"data:image/jpeg;base64,{base64String}";
-                        }
-                        <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
-                        <div class="image-container">
-                            <img src="@imageSource" alt="Post Image" class="index-image" />
-                        </div>
-                        @if (item.Content.Length > 300)
+                <div class="card-no-border">
+                    @{
+                        var base64String = Convert.ToBase64String(item.Image);
+                        var imageSource = $"data:image/jpeg;base64,{base64String}";
+                    }
+                    <h3 class="h3">@item.Title <small class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</small></h3>
+                    <div class="image-container">
+                        <img src="@imageSource" alt="Post Image" class="index-image" />
+                    </div>
+                    @if (item.Content.Length > 300)
+                    {
+                        <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn">Ver más</a></p>
+                    }
+                    else
+                    {
+                        <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
+                    }
+                    <div class="box d-flex align-items-center">
+                        @if (item.Author is not null)
                         {
-                            <p class="p-content">@Html.Raw(Html.Encode(item.Content.Substring(0, 300)))... <a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="ver-mas-btn">Ver más</a></p>
+                            <p class="mr-3 mr-3-with-padding">Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
                         }
                         else
                         {
-                            <p class="p-content">@Html.Raw(Html.Encode(item.Content))</p>
+                            <p class="mr-3 mr-3-with-padding">Autor: Desconocido</p>
                         }
-                        <div class="box d-flex align-items-center">
-                            @if (item.Author is not null)
-                            {
-                                <p class="mr-3 mr-3-with-padding">Autor: <a href="/BlogPosts/PostsByAuthor/@item.AuthorId" class="comentts">@item.Author.FirstName @item.Author.LastName</a></p>
-                            }
-                            else
-                            {
-                                <p class="mr-3 mr-3-with-padding">Autor: Desconocido</p>
-                            }
-                            @if (item.Comments is not null)
-                            {
-                                <p class="mr-3"><a href="/BlogPosts/Details/@item.Id#commentForm" class="comentts">Comentarios: @item.Comments.Count</a></p>
-                            }
-                            else
-                            {
-                                <p class="mr-3">Comentarios: 0</p>
-                            }
-                        </div>
+                        @if (item.Comments is not null)
+                        {
+                            <p class="mr-3"><a href="/BlogPosts/Details/@item.Id#commentForm" class="comentts">Comentarios: @item.Comments.Count</a></p>
+                        }
+                        else
+                        {
+                            <p class="mr-3">Comentarios: 0</p>
+                        }
                     </div>
-                    <div style="margin-bottom: 30px;"></div>
-                }
-            }
+                </div>
+                <div style="margin-bottom: 30px;"></div>
+            }            
         </div>
         <div class="col-lg-3" style="justify-self: end;">
             <h3>Categor&iacute;as</h3>
@@ -119,7 +114,7 @@
                         });
                     })
                     .catch(error => {
-                        console.error('Error loading categories: ', error);
+                        console.error('Error loading authors: ', error);
                     })
             }
 

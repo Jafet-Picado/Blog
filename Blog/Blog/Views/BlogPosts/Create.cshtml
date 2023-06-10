@@ -13,9 +13,8 @@
             <label asp-for="Title">Título</label>
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
-        <div class="form-floating form-text">
-            <input asp-for="Content" class="form-control" />
-            <label asp-for="Content">Contenido</label>
+        <div class="form-area">
+            <textarea asp-for="Content" id="contentText" class="form-control" cols="100" rows="15" placeholder="Escriba el contenido de su post"></textarea>            
             <span asp-validation-for="Content" class="text-danger"></span>
         </div>
         <div class="form-floating form-text">
@@ -25,70 +24,16 @@
             <span asp-validation-for="Image" class="text-danger"></span>
         </div>
         <div class="form-floating form-text">
-            <br>
-            <input asp-for="UpdatedAt" class="form-control" />
-            <label asp-for="UpdatedAt">Actualizado en</label>
-            <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-        </div>
-        <div class="form-floating form-text">
-            <input asp-for="CategoryId" class="form-control" />
-            <label asp-for="CategoryId">Categoría ID</label>
+            <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control"></select>
+            <label asp-for="CategoryId">Categoría</label>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
         <input type="submit" value="Crear" id="form-submit" class="extended-submit" />
     </form>
 </div>
-<h1>Create</h1>
 
-<h4>BlogPost</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input type="file" id="imageFile" name="imageFile" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group" hidden="true">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group" hidden="true">
-                <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
-            </div>
-            <div class="form-floating form-text">
-                <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control"></select>
-                <label asp-for="CategoryId">Categoría</label>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="signup-link">
+    <a asp-action="Index">Regresar al inicio</a>
 </div>
 
 @section Scripts {

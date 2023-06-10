@@ -275,7 +275,8 @@ body {
     margin-bottom: 0px;
 }
 
-#commentText{
+#commentText,
+#contentText{
     resize:none;
 }
 }
@@ -319,11 +320,31 @@ form .form-text {
     margin: 30px 0;
 }
 
+form .form-area {
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+}
+
 .form-text input {
     width: 100%;
     padding: 0 5px;
     height: 40px;
     font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.form-area #contentText {
+    width: 100%;
+    padding: 0 5px;            
+    font-size: 12px;
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.form-text select {        
     border: none;
     background: none;
     outline: none;

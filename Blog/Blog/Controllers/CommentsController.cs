@@ -94,7 +94,9 @@ namespace Blog.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments
+                .Include(c => c.BlogPost)
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -195,10 +197,11 @@ namespace Blog.Controllers
                     .Include(c => c.Author)
                     .Select(c => new
                     {
-                         AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido",
-                         c.CreatedAt,
+                        AuthorName = c.Author != null ? $"{c.Author.FirstName} {c.Author.LastName}" : "Desconocido",
+                        c.CreatedAt,
                         Email = c.Author != null ? c.Author.Email : "",
-                        c.Text
+                        c.Text,
+                        c.Id                        
                      })
                     .ToList();
 

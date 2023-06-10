@@ -103,10 +103,19 @@
                     commentsContainer.innerHTML = '';
                     
                     comments.forEach(comment => {                        
-                        const commentElement = document.createElement('div');                                 
+                        const commentElement = document.createElement('div');
+                        const date = new Date(comment.createdAt);
+                        const formattedDate = date.toLocaleDateString();
                         commentElement.innerHTML = `
-                                        <h5 class="comment-title">${comment.authorName}</h5>
-                                        <p class="comment-date">${comment.createdAt}</p>
+                                        <h5 class="comment-title">${comment.authorName}
+                                            <a href="/Comments/Delete/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Borrar">
+                                                <i class="bi bi-trash3"></i>
+                                            </a>
+                                            <a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </h5>
+                                        <p class="comment-date">${formattedDate}</p>
                                         <p class="comment-date">${comment.email}</p>
                                         <p comment-content>${comment.text}</p>
                                         <hr />

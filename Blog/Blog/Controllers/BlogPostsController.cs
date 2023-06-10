@@ -10,6 +10,7 @@ using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Blog.Controllers
 {
@@ -41,8 +42,7 @@ namespace Blog.Controllers
             var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
 
             ViewBag.PageCount = pageCount;
-            ViewBag.CurrentPage = page;
-
+            ViewBag.CurrentPage = page;            
             return View(model);
         }
 
@@ -85,16 +85,8 @@ namespace Blog.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,Content,CreatedAt,UpdatedAt,AuthorId,CategoryId")] BlogPost blogPost, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
-            {
-                var currentDate = DateTime.Today;
-                var startDate = new DateTime(2023, 1, 1);
-                var endDate = currentDate;
-                var totalDays = (endDate - startDate).Days;
-                var random = new Random();
-                var randomDays = random.Next(totalDays);
-                var randomDate = startDate.AddDays(randomDays);
-
-                blogPost.CreatedAt = randomDate;
+            {                              
+                blogPost.CreatedAt = DateTime.Now;
 
                 if (imageFile != null && imageFile.Length > 0)
                 {
@@ -146,6 +138,8 @@ namespace Blog.Controllers
             {
                 return NotFound();
             }
+            List<Category> categories = _context.Categories.ToList();
+            ViewBag.Categories = categories;
             ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", blogPost.AuthorId);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", blogPost.CategoryId);
             return View(blogPost);
@@ -164,7 +158,7 @@ namespace Blog.Controllers
             }
 
             if (ModelState.IsValid)
-            {
+            {                
                 try
                 {
                     var originalBlogPost = _context.BlogPosts.Find(blogPost.Id);
@@ -179,11 +173,10 @@ namespace Blog.Controllers
                         }
 
                         originalBlogPost.Image = imageBytes;
-                    }
-                    var date = DateTime.Now;
+                    }                    
                     originalBlogPost.Title = blogPost.Title;
                     originalBlogPost.Content = blogPost.Content;
-                    originalBlogPost.UpdatedAt = date;
+                    originalBlogPost.UpdatedAt = DateTime.Now;
                     _context.Update(originalBlogPost);
                     await _context.SaveChangesAsync();
                 }
@@ -283,14 +276,26 @@ namespace Blog.Controllers
             }
         }
 
-        public IActionResult PostsByAuthor(string id)
-        {
-            var posts =  _context.BlogPosts
-                .Include(c => c.Author)
+        public IActionResult PostsByAuthor(string id, int page=1)
+        {            
+
+            int pageSize = 5; // Número de publicaciones por página
+
+            var model = _context.BlogPosts
+                .Include(b => b.Author)
+                .Include(c => c.Comments)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Where(p => p.AuthorId == id)
                 .ToList();
 
-            return View(posts);
+            var totalCount = _context.BlogPosts.Count();
+            var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            ViewBag.PageCount = pageCount;
+            ViewBag.CurrentPage = page;
+            return View(model);
         }
 
         public IActionResult GetAllAuthors()
