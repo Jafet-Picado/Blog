@@ -1,4 +1,6 @@
-﻿@model Blog.Models.BlogPost
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<BlogUser> SignInManager
+@model Blog.Models.BlogPost
 
 @{
     ViewData["Title"] = "Details";
@@ -31,8 +33,14 @@
     </div>
     <br><br>
     <div class="text-center">
-        <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
-        <button type="button" class="btn btn-delete" onclick="location.href='@Url.Action("Delete", new { id = Model?.Id })'">Eliminar</button>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            if (User.IsInRole("Admin") || SignInManager.UserManager.GetUserId(User) == Model.AuthorId)
+            {
+                <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
+                <button type="button" class="btn btn-delete" onclick="location.href='@Url.Action("Delete", new { id = Model?.Id })'">Eliminar</button>
+            }            
+        }        
         <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>        
     </div>
     <label id="prueba">Comentarios</label>
@@ -42,7 +50,8 @@
         <button class="btn btn-details btn-agregar" type="submit">Agregar</button>
     </form>
     <br><br>
-    <div class="comment-section" id="commentsSection"></div>
+    <div class="comment-section" id="commentsSection" data-userid="@SignInManager.UserManager.GetUserId(User)"
+    data-isadmin="@User.IsInRole("Admin").ToString()"></div>
 </div>
 
 
@@ -76,19 +85,18 @@
                 .then(comments => {
                     const commentsContainer = document.getElementById('commentsSection');
                     commentsContainer.innerHTML = '';
-                    
-                    comments.forEach(comment => {                        
+                    const userId = commentsContainer.dataset.userid;
+                    const isAdmin = commentsContainer.dataset.isadmin === 'True';
+                    comments.forEach(comment => {                                                
                         const commentElement = document.createElement('div');
                         const date = new Date(comment.createdAt);
                         const formattedDate = date.toLocaleDateString();
+                        const deleteButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Delete/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Borrar"><i class="bi bi-trash3"></i></a>` : '';
+                        const editButton = (comment.authorId === userId || isAdmin) ? `<a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="bi bi-pencil-square"></i></a>` : '';
                         commentElement.innerHTML = `
-                                        <h5 class="comment-title">${comment.authorName}
-                                            <a href="/Comments/Delete/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Borrar">
-                                                <i class="bi bi-trash3"></i>
-                                            </a>
-                                            <a href="/Comments/Edit/${comment.id}" class="badge bg-secondary" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
+                                        <h5 class="comment-title">${comment.authorName}                                        
+                                            ${deleteButton}
+                                            ${editButton}
                                         </h5>
                                         <p class="comment-date">${formattedDate}</p>
                                         <p class="comment-date">${comment.email}</p>
