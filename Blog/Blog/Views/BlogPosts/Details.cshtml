@@ -2,72 +2,46 @@
 
 @{
     ViewData["Title"] = "Details";
+    var base64String = Convert.ToBase64String(Model.Image);
+    var imageSource = $"data:image/jpeg;base64,{base64String}";
 }
 
 <div class="container">
-    <div class="form-container wider-details form-text ">
+    <div class="form-container wider-details form-text ">        
         <h1>@Html.DisplayFor(model => model.Title)</h1>
-        <div class="row">
-            <div class="col-sm-2">
-                <label>Contenido:</label>
-            </div>
-            <div class="col-sm-10">
-                <p>@Html.DisplayFor(model => model.Content)</p>
-            </div>
-            <div class="col-sm-2">
-                <label>Creado en:</label>
-            </div>
-            <div class="col-sm-10">
-                <p>@Html.DisplayFor(model => model.CreatedAt)</p>
-            </div>
-            <div class="col-sm-2">
-                <label>Actualizado en:</label>
-            </div>
-            <div class="col-sm-10">
-                <p>@Html.DisplayFor(model => model.UpdatedAt)</p>
-            </div>
-            <div class="col-sm-2">
-                <label>Autor:</label>
-            </div>
-            <div class="col-sm-10">
-                <p>@Html.DisplayFor(model => model.Author.FirstName) @Html.DisplayFor(model => model.Author.LastName)</p>
-            </div>
-            <div class="col-sm-2">
-                <label>Categoria:</label>
-            </div>
-            <div class="col-sm-10">
-                <p>@Html.DisplayFor(model => model.CategoryId)</p>
-            </div>
-            <div class="col-sm-2">
-                <label>Imagen:</label>
-            </div>
-            <div class="col-sm-10">
-                @{
-                    var base64String = Convert.ToBase64String(Model.Image);
-                    var imageSource = $"data:image/jpeg;base64,{base64String}";
-                }
-                <img src="@imageSource" alt="Post Image" class="details-image" />
-            </div>
-        </div>
-
-
+        <h6>Creado el @Html.DisplayFor(model => model.CreatedAt)</h6>
+        @if(Model.UpdatedAt is not null)
+        {
+            <h6>Actualizado el @Html.DisplayFor(model => model.UpdatedAt)</h6>
+        }                                
+        <h6>
+            Categoría:
+            <a href="/BlogPosts/PostsByCategory/@Model.CategoryId" class="badge rounded-pill bg-secondary">@Model.Category.Name</a>
+        </h6>
+        <h6>
+            Author:
+            <a href="/BlogPosts/PostsByAuthor/@Model.AuthorId" class="badge rounded-pill bg-secondary">@Model.Author.FirstName @Model.Author.LastName</a>
+        </h6>
+        <hr />        
+        <div>
+            <img src="@imageSource" alt="Post Image" class="details-image" />
+        </div>        
+        <hr />        
+        <p>@Html.DisplayFor(model => model.Content)</p>        
+    </div>
+    <br><br>
     <div class="text-center">
-            <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
-            <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>
+        <button type="button" class="btn btn-details" onclick="location.href='@Url.Action("Edit", new { id = Model?.Id })'">Editar</button>
+        <button type="button" class="btn btn-details btn-volver" onclick="location.href='@Url.Action("Index")'">Volver a la lista</button>
     </div>
-
-        <label id="prueba">Comentarios</label>
-        <form id="commentForm" onsubmit="CreateComment(event)">
-            <textarea id="commentText" class="form-control" name="commentText" placeholder="Añada un nuevo comentario" maxlength="300" cols="100" rows="5"></textarea>
-            <br />
-            <button class="btn btn-details btn-agregar" type="submit">Agregar</button>
-        </form>
-
-        <br />
-        <br />
-        <div class="comment-section" id="commentsSection">
-        </div>
-    </div>
+    <label id="prueba">Comentarios</label>
+    <form id="commentForm" onsubmit="CreateComment(event)">
+        <textarea id="commentText" class="form-control" name="commentText" placeholder="Añada un nuevo comentario" maxlength="300" cols="100" rows="5"></textarea>
+        <br>
+        <button class="btn btn-details btn-agregar" type="submit">Agregar</button>
+    </form>
+    <br><br>
+    <div class="comment-section" id="commentsSection"></div>
 </div>
 
 

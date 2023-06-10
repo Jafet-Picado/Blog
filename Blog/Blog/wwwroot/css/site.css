@@ -32,10 +32,10 @@ body {
 }
 
 .details-image {
-    width: 350px;
-    height: 188px;
+    width: 850px;
+    height: 350px;
     padding-bottom: 10px;
-    padding-top: 10px;
+    padding-top: 10px;    
 }
 
 
@@ -301,6 +301,14 @@ footer {
 .wider-details {
     width: 1000px;
     padding: 20px;
+}
+
+.wider-details a {
+    text-decoration: none;
+}
+
+.wider-details > div {
+    text-align: center;
 }
 
 .form-container h1 {
