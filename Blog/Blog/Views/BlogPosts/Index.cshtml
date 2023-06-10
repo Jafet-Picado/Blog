@@ -39,7 +39,7 @@
                             }
                             @if (item.Comments is not null)
                             {
-                                <p class="mr-3"><a href="@Url.Action("Details", "BlogPosts", new { id = item.Id })" class="comentts">Comentarios: @item.Comments.Count</a></p>
+                                <p class="mr-3"><a href="/BlogPosts/Details/@item.Id#commentForm" class="comentts">Comentarios: @item.Comments.Count</a></p>
                             }
                             else
                             {
