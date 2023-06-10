@@ -39,7 +39,7 @@ namespace Blog.Controllers
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Redirect("/Admin/");
             }
             return View(category);
         }
@@ -92,7 +92,7 @@ namespace Blog.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Redirect("/Admin/");
             }
             return View(category);
         }
@@ -133,7 +133,7 @@ namespace Blog.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Redirect("/Admin/");
         }
 
         private bool CategoryExists(int id)

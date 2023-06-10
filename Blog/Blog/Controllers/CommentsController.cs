@@ -10,6 +10,7 @@ using Blog.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 
 namespace Blog.Controllers
 {
@@ -117,7 +118,7 @@ namespace Blog.Controllers
                             throw;
                         }
                     }
-                    return RedirectToAction(nameof(Index));
+                    return Redirect("/BlogPosts/Details/"+comment.BlogPostId);
                 }
             }
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
@@ -159,6 +160,7 @@ namespace Blog.Controllers
                 return Problem("Entity set 'BlogDbContext.Comments'  is null.");
             }
             var comment = await _context.Comments.FindAsync(id);
+            var blogPostId = comment.BlogPostId;
             if (User.IsInRole("Admin") || _userManager.GetUserId(User) == comment.AuthorId)
             {
                 if (comment != null)
@@ -167,7 +169,7 @@ namespace Blog.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Redirect("/BlogPosts/Details/" + blogPostId);
             }
             return NotFound();
         }

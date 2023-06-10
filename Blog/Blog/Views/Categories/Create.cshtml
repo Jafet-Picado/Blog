@@ -1,31 +1,24 @@
 ﻿@model Blog.Models.Category
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear categoría";
 }
 
-<h1>Create</h1>
-
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+<div class="form-container wider-create">
+    <h1>@ViewData["Title"]</h1>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-floating form-text">
+            <input asp-for="Name" class="form-control" />
+            <label asp-for="Name">Nombre</label>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Guardar" id="form-submit" class="extended-submit" />
+    </form>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="signup-link">
+    <a href="/Admin/">Regresar al panel</a>
 </div>
 
 @section Scripts {
