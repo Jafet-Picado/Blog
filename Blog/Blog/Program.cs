@@ -18,18 +18,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>().AddDefaultTokenProviders()
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-//builder.Services.AddAuthentication().AddFacebook(option =>
-//{
-//    option.AppId = "555515893195524";
-//    option.AppSecret = "39737841968438e66bd0e9038f784e1b";
-//});
-
-//builder.Services.AddAuthentication().AddGoogle(option =>
-//{
-//    option.ClientId = "386404887961-ujomiu71hdijd9qpv9l2bu4m1u3u4dbb.apps.googleusercontent.com";
-//    option.ClientSecret = "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";
-//});
-
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
